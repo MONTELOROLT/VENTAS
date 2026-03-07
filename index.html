@@ -236,11 +236,11 @@
     background: rgba(255,255,255,0.06);
   }
   .home-hero-greeting { color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 4px; }
-  .home-hero-date { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: white; margin-bottom: 20px; }
+  .home-hero-date { font-family: Arial, sans-serif; font-size: 1.1rem; font-weight: 700; color: white; margin-bottom: 20px; }
   .home-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .home-stat { background: rgba(255,255,255,0.12); border-radius: var(--radius-sm); padding: 14px; }
   .home-stat-label { color: rgba(255,255,255,0.55); font-size: 0.7rem; margin-bottom: 4px; }
-  .home-stat-value { font-family: 'Syne', sans-serif; color: white; font-size: 1.4rem; font-weight: 700; }
+  .home-stat-value { font-family: Arial, sans-serif; color: white; font-size: 1.4rem; font-weight: 700; }
 
   .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
   .action-card {
@@ -424,7 +424,7 @@
   }
   .sale-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
   .sale-client { font-weight: 700; font-size: 0.95rem; color: var(--ink); }
-  .sale-total { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--green-mid); }
+  .sale-total { font-family: Arial, sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--green-mid); }
   .sale-date { font-size: 0.75rem; color: var(--ink-muted); }
   .sale-items { font-size: 0.78rem; color: var(--ink-muted); margin-top: 4px; }
   .sale-pdf-btn {
@@ -472,12 +472,12 @@
     margin-top: 8px;
   }
   .date-group-label {
-    font-family: 'Syne', sans-serif; font-size: 0.82rem;
+    font-family: Arial, sans-serif; font-size: 0.82rem;
     font-weight: 700; color: var(--green-dark);
     text-transform: uppercase; letter-spacing: 0.5px;
   }
   .date-group-total {
-    font-family: 'Syne', sans-serif; font-size: 0.9rem;
+    font-family: Arial, sans-serif; font-size: 0.9rem;
     font-weight: 800; color: var(--green-mid);
     background: #e8f0fc; padding: 3px 10px;
     border-radius: 99px;
@@ -487,10 +487,11 @@
     background: var(--green-dark); border-radius: var(--radius);
     padding: 16px 20px; margin-bottom: 16px;
     display: flex; justify-content: space-between; align-items: center;
+    font-family: Arial, sans-serif;
   }
-  .hist-summary-left { color: rgba(255,255,255,0.7); font-size: 0.82rem; }
-  .hist-summary-count { font-size: 1.1rem; font-weight: 700; color: white; margin-top: 2px; }
-  .hist-summary-total { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--green-glow); }
+  .hist-summary-left { color: rgba(255,255,255,0.7); font-size: 0.82rem; font-family: Arial, sans-serif; }
+  .hist-summary-count { font-size: 1.1rem; font-weight: 700; color: white; margin-top: 2px; font-family: Arial, sans-serif; }
+  .hist-summary-total { font-family: Arial, sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--green-glow); }
 
   /* ─── MANAGEMENT SCREENS ─── */
   .mgmt-list { display: flex; flex-direction: column; gap: 10px; }
@@ -1220,52 +1221,39 @@ function loadDB() {
 // INIT
 // ═══════════════════════════════════════════════
 window.addEventListener('load', () => {
-  const loaded = loadDB();
-  if (!loaded) {
-    seedDemoData();
-  } else {
-    // Migración: garantizar campos nuevos si la DB viene de versión anterior
-    if (!DB.rutas) DB.rutas = [];
-    if (!DB.rutaClientes) DB.rutaClientes = [];
-    if (!DB.clientProducts) DB.clientProducts = [];
-    saveDB();
-  }
+  // Preservar URL antes de limpiar
+  const urlPreservado = localStorage.getItem('ventaruta_url') ||
+    'https://script.google.com/macros/s/AKfycbyC-o4LVMOmnxb7JVyXzmDtdSWkvDTXLpdkjCyKGB9skjLZUDxz1uR-RGa0imHw7uE5/exec';
+
+  // Limpiar datos locales viejos — arrancar limpio para sincronizar desde Sheets
+  localStorage.removeItem('ventaruta_db');
+  DB.config.appsScriptUrl = urlPreservado;
+  seedDemoData();
+
   setTimeout(() => {
     document.getElementById('splash').classList.add('hidden');
-    // Pre-llenar URL si ya estaba guardada
-    const urlGuardada = DB.config.appsScriptUrl || localStorage.getItem('ventaruta_url') || '';
-    if (urlGuardada) {
-      document.getElementById('apps-script-url').value = urlGuardada;
-      DB.config.appsScriptUrl = urlGuardada;
-      localStorage.setItem('ventaruta_url', urlGuardada);
-    }
-    if (!DB.config.appsScriptUrl && !loaded) {
-      document.getElementById('config-modal').classList.remove('hidden');
-    } else {
-      showLoginScreen();
-    }
+    document.getElementById('apps-script-url').value = urlPreservado;
+    DB.config.appsScriptUrl = urlPreservado;
+    localStorage.setItem('ventaruta_url', urlPreservado);
+    saveDB();
+    showLoginScreen();
   }, 1900);
 });
 
 function seedDemoData() {
-  DB.priceLists = [
-    { id: 'PL001', name: 'Lista General' },
-    { id: 'PL002', name: 'Lista Mayorista' },
-    { id: 'PL003', name: 'Lista VIP' }
-  ];
-  DB.products = [];
-  DB.priceListItems = [];
-  DB.clientProducts = [];
-  DB.rutas = [];
-  DB.rutaClientes = [];
-  DB.clients = [];
-  DB.sales = [];
-  DB.saleDetails = [];
-  DB.ciudades = ['Tuluá','Buga','Palmira','Cali','Cartago','Roldanillo','Zarzal','La Victoria','Sevilla','Trujillo','Andalucía','Bugalagrande','Pradera','Florida'];
-  DB.categorias = ['Lácteos','Bebidas','Aseo','Panadería','Carnes','Granos'];
-  DB.usuarios = [
-    { id: 'U001', nombre: 'Administrador', cedula: '00000000', clave: 'admin123', rol: 'admin', estado: 'activo' },
-    { id: 'U002', nombre: 'Juan Pérez', cedula: '12345678', clave: 'vendedor1', rol: 'vendedor', estado: 'activo' }
+  DB.priceLists    = [];
+  DB.products      = [];
+  DB.priceListItems= [];
+  DB.clientProducts= [];
+  DB.rutas         = [];
+  DB.rutaClientes  = [];
+  DB.clients       = [];
+  DB.sales         = [];
+  DB.saleDetails   = [];
+  DB.ciudades      = [];
+  DB.categorias    = [];
+  DB.usuarios      = [
+    { id: 'U001', nombre: 'Administrador', cedula: '00000000', clave: 'admin123', rol: 'admin', estado: 'activo' }
   ];
   saveDB();
 }
@@ -2399,7 +2387,7 @@ function openSaleDetail(saleId) {
       </div>`).join('')}
     <div style="display:flex;justify-content:space-between;margin-top:16px;padding:14px;background:var(--green-dark);border-radius:10px">
       <span style="color:rgba(255,255,255,0.7)">Total</span>
-      <span style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--green-glow)">$${fmt(sale.total)}</span>
+      <span style="font-family:Arial,sans-serif;font-size:1.3rem;font-weight:800;color:var(--green-glow)">$${fmt(sale.total)}</span>
     </div>
     ${sale.notes ? `<div style="margin-top:10px;font-size:0.8rem;color:var(--ink-muted)">📝 ${sale.notes}</div>` : ''}
   `;
