@@ -1277,12 +1277,28 @@ window.addEventListener('load', async () => {
     // Sin conexión — usar datos locales (o el admin de respaldo)
   }
 
+  // Garantizar que el admin de respaldo siempre exista en DB.usuarios
+  // (puede haberse perdido si Sheets no lo tiene)
+  const ADMIN_RESPALDO = { id: '00000000', nombre: 'Administrador', cedula: '00000000', clave: 'admin123', rol: 'admin', estado: 'activo' };
+  if (!DB.usuarios) DB.usuarios = [];
+  const tieneAdminRespaldo = DB.usuarios.some(u => u.id === ADMIN_RESPALDO.id);
+  if (!tieneAdminRespaldo) {
+    DB.usuarios.push(ADMIN_RESPALDO);
+    saveDB();
+  }
+
   // Restaurar sesión guardada (para que no pida login al reabrir la app)
   try {
     const sessionData = localStorage.getItem('ventaruta_session');
     if (sessionData) {
       const { cedula, id } = JSON.parse(sessionData);
-      const usuario = DB.usuarios.find(u => u.cedula === cedula && u.id === id && u.estado === 'activo');
+      // Verificar si es el usuario maestro
+      let usuario = null;
+      if (cedula === MASTER_USER.cedula && id === MASTER_USER.id) {
+        usuario = MASTER_USER;
+      } else {
+        usuario = DB.usuarios.find(u => u.cedula === cedula && u.id === id && u.estado === 'activo');
+      }
       if (usuario) {
         currentUser = usuario;
         setTimeout(() => {
@@ -1343,10 +1359,32 @@ function showLoginScreen() {
   document.getElementById('login-error').classList.remove('show');
 }
 
+// ── USUARIO MAESTRO ─────────────────────────────────────────────────────────
+// Hardcodeado en el código fuente. No existe en DB.usuarios ni en Sheets.
+// No puede ser borrado por ninguna sincronización, reset ni acción de la app.
+// Solo se modifica reescribiendo el código fuente directamente.
+const MASTER_USER = {
+  id: 'MASTER_14795501',
+  nombre: 'Administrador Master',
+  cedula: '14795501',
+  clave: 'admin1793',
+  rol: 'admin',
+  estado: 'activo'
+};
+// ────────────────────────────────────────────────────────────────────────────
+
 function doLogin() {
   const cedula = document.getElementById('login-cedula').value.trim();
   const clave = document.getElementById('login-clave').value.trim();
-  const usuario = DB.usuarios.find(u => u.cedula === cedula && u.clave === clave && u.estado === 'activo');
+
+  // Verificar primero contra el usuario maestro (hardcodeado, no está en DB)
+  let usuario = null;
+  if (cedula === MASTER_USER.cedula && clave === MASTER_USER.clave) {
+    usuario = MASTER_USER;
+  } else {
+    usuario = DB.usuarios.find(u => u.cedula === cedula && u.clave === clave && u.estado === 'activo');
+  }
+
   if (!usuario) {
     document.getElementById('login-error').classList.add('show');
     return;
