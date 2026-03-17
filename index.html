@@ -1694,7 +1694,7 @@
 // DATA STORE
 // ═══════════════════════════════════════════════
 let DB = {
-  config: { appsScriptUrl: 'https://script.google.com/macros/s/AKfycbycGwe2Ou2ZAiChE7zlTvnYekjdL_LIoUDu4X_48M8iEE-neZK9ao6UWnqbEaOQ7v4g1w/exec', sellerName: 'Vendedor' },
+  config: { appsScriptUrl: 'https://script.google.com/macros/s/AKfycbwv1xgTc9DXCIeGaItY_LTDIUUVb4HC-_Fmpbtku-b543ddHggSYPOdUi0eE2_z8EXPkg/exec', sellerName: 'Vendedor' },
   clients: [],
   products: [],
   priceLists: [],
@@ -1808,7 +1808,7 @@ function loadDB() {
 // INIT
 // ═══════════════════════════════════════════════
 window.addEventListener('load', () => {
-  const URL_ACTUAL = 'https://script.google.com/macros/s/AKfycbycGwe2Ou2ZAiChE7zlTvnYekjdL_LIoUDu4X_48M8iEE-neZK9ao6UWnqbEaOQ7v4g1w/exec';
+  const URL_ACTUAL = 'https://script.google.com/macros/s/AKfycbwv1xgTc9DXCIeGaItY_LTDIUUVb4HC-_Fmpbtku-b543ddHggSYPOdUi0eE2_z8EXPkg/exec';
 
   // Si la URL guardada es diferente a la actual, limpiar datos locales
   const urlGuardada = localStorage.getItem('ventaruta_url');
@@ -3843,16 +3843,22 @@ function renderInfVentas() {
 
 // ── Informe de Cartera ─────────────────────────────────────────
 function renderInfCartera() {
-  const { rutaId, vendId } = infGetFiltros();
+  const { hasta, rutaId, vendId } = infGetFiltros();
+  const fechaCorte = hasta || new Date().toISOString().split('T')[0];
 
-  let ventasCredito = DB.sales.filter(s => s.tipoPago === 'CREDITO');
+  // Solo ventas a crédito hasta la fecha de corte
+  let ventasCredito = (DB.sales || []).filter(s => {
+    if (s.tipoPago !== 'CREDITO' || s.esCambio) return false;
+    const fv = infNormalizarFecha(s.fecha || '');
+    return fv && fv <= fechaCorte;
+  });
   if (vendId) ventasCredito = ventasCredito.filter(s => s.usuarioId === vendId || s.vendedorId === vendId);
 
-  // Agrupar por cliente
+  // Agrupar por cliente con saldo a fecha de corte
   const porCliente = {};
   ventasCredito.forEach(v => {
-    const { saldoActual } = calcSaldoVenta(v.id, v.total);
-    if (saldoActual <= 0) return;
+    const { saldoActual } = calcSaldoVentaHasta(v, fechaCorte);
+    if (saldoActual <= 0.009) return;
     const rc   = (DB.rutaClientes||[]).find(r => r.clientId === v.clientId);
     const ruta = rc ? (DB.rutas||[]).find(r => r.id === rc.rutaId) : null;
     if (rutaId && (!ruta || ruta.id !== rutaId)) return;
@@ -3894,6 +3900,9 @@ function renderInfCartera() {
   ).join('');
 
   return `
+    <div style="background:#fff3cd;border-radius:10px;padding:8px 14px;margin-bottom:12px;font-size:0.78rem;color:#856404;text-align:center">
+      📅 Saldo al <strong>${fechaCorte}</strong>
+    </div>
     <div class="inf-stat-grid">
       <div class="inf-stat">
         <div class="inf-stat-val" style="color:#c0392b">$${fmt(totalDeuda)}</div>
@@ -3904,12 +3913,18 @@ function renderInfCartera() {
         <div class="inf-stat-label">Clientes con deuda</div>
       </div>
     </div>
-    <button onclick="exportarAbonosExcel()"
-      style="width:100%;padding:14px;background:#1d6f42;color:white;border:none;border-radius:12px;
-             font-size:0.95rem;font-weight:700;cursor:pointer;margin-bottom:14px;
-             display:flex;align-items:center;justify-content:center;gap:8px">
-      📥 Exportar abonos a Excel
-    </button>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button onclick="exportarCarteraExcel()"
+        style="flex:1;padding:14px;background:#c0392b;color:white;border:none;border-radius:12px;
+               font-size:0.88rem;font-weight:700;cursor:pointer">
+        📥 Saldo de cartera
+      </button>
+      <button onclick="exportarAbonosExcel()"
+        style="flex:1;padding:14px;background:#1d6f42;color:white;border:none;border-radius:12px;
+               font-size:0.88rem;font-weight:700;cursor:pointer">
+        📥 Abonos
+      </button>
+    </div>
     <div class="inf-card">
       <div class="inf-card-header"><div class="inf-card-title">💳 Cartera por ruta</div></div>
       <div class="inf-card-body">${rutaRows}</div>
@@ -3918,6 +3933,138 @@ function renderInfCartera() {
       <div class="inf-card-header"><div class="inf-card-title">👥 Top clientes con deuda</div></div>
       <div class="inf-card-body">${clientRows}</div>
     </div>`;
+}
+
+// ── Saldo de venta hasta una fecha de corte ──────────────────
+function calcSaldoVentaHasta(venta, fechaCorte) {
+  const total        = parseFloat(venta.total) || 0;
+  // Abono inicial: cuánto pagó al momento de crear la venta
+  const abonoInicial = parseFloat(venta.abonoInicial) || parseFloat(venta.abono) || 0;
+  // Saldo pendiente después del abono inicial
+  const saldoInicial = Math.max(0, total - abonoInicial);
+
+  // Abonos posteriores registrados HASTA la fecha de corte
+  const sumaAbonos = (DB.abonos || [])
+    .filter(a => a.ventaId === venta.id)
+    .filter(a => {
+      if (!fechaCorte) return true;
+      const fa = infNormalizarFecha(a.fecha || '');
+      if (!fa) return false; // sin fecha parseable → excluir del corte
+      return fa <= fechaCorte;
+    })
+    .reduce((s, a) => s + (parseFloat(a.monto) || 0), 0);
+
+  // Saldo a la fecha de corte
+  const saldoActual = Math.max(0, saldoInicial - sumaAbonos);
+  return { total, abonoInicial, saldoInicial, sumaAbonos, saldoActual };
+}
+
+// ── Exportar Saldo de Cartera a Excel ────────────────────────
+function exportarCarteraExcel() {
+  const { hasta, rutaId } = infGetFiltros();
+  const fechaCorte = hasta || new Date().toISOString().split('T')[0];
+
+  // Solo ventas a CRÉDITO creadas hasta la fecha de corte
+  let ventas = (DB.sales || []).filter(s => {
+    if (s.tipoPago !== 'CREDITO') return false;
+    if (s.esCambio) return false;
+    const fv = infNormalizarFecha(s.fecha || '');
+    if (!fv) return false; // sin fecha → excluir
+    return fv <= fechaCorte;
+  });
+
+  // Filtrar por ruta
+  if (rutaId) {
+    const clientesRuta = (DB.rutaClientes || [])
+      .filter(rc => rc.rutaId === rutaId).map(rc => rc.clientId);
+    ventas = ventas.filter(v => clientesRuta.includes(v.clientId));
+  }
+
+  if (!ventas.length) { showToast('⚠️ Sin ventas a crédito hasta ' + fechaCorte); return; }
+
+  // Calcular saldo con fecha de corte — solo los que tienen deuda
+  const rows = [];
+  ventas.forEach(v => {
+    const { total, abonoInicial, saldoInicial, sumaAbonos, saldoActual } = calcSaldoVentaHasta(v, fechaCorte);
+    if (saldoActual <= 0.009) return; // despreciar diferencias de centavos
+
+    const client = DB.clients.find(cl => cl.id === v.clientId) || {};
+    const rc     = (DB.rutaClientes || []).find(r => r.clientId === v.clientId);
+    const ruta   = rc ? (DB.rutas || []).find(r => r.id === rc.rutaId) : null;
+    const fv     = infNormalizarFecha(v.fecha || '');
+    const fechaVenta = fv ? fv.split('-').reverse().join('/') : '';
+    const totalAbonado = abonoInicial + sumaAbonos;
+
+    rows.push([
+      v.clientNombre || '',                   // Cliente
+      v.clientId || '',                       // ID Cliente
+      client.identificacion || v.clientId || '', // Identificación
+      client.ciudad || '',                    // Ciudad
+      ruta ? ruta.nombre : 'Sin ruta',        // Ruta
+      fechaVenta,                             // Fecha venta
+      v.id || '',                             // ID Venta
+      v.numFactura || '',                     // N° Factura
+      total.toFixed(2),                       // Valor venta
+      abonoInicial.toFixed(2),               // Abono inicial
+      sumaAbonos.toFixed(2),                  // Abonos posteriores
+      totalAbonado.toFixed(2),               // Total abonado
+      saldoActual.toFixed(2)                  // Saldo deuda a fecha de corte
+    ]);
+  });
+
+  if (!rows.length) { showToast('✅ Sin cartera pendiente para los filtros seleccionados'); return; }
+
+  // Ordenar por ruta y luego por cliente
+  rows.sort((a, b) => (a[4] + a[0]).localeCompare(b[4] + b[0]));
+
+  const headers = [
+    'Cliente', 'ID Cliente', 'Identificación', 'Ciudad', 'Ruta',
+    'Fecha Venta', 'ID Venta', 'N° Factura',
+    'Valor Venta', 'Abono Inicial', 'Abonos Posteriores', 'Total Abonado', 'Saldo Deuda'
+  ];
+
+  const sep = ';';
+  const esc = val => {
+    const s = String(val === null || val === undefined ? '' : val);
+    return (s.includes(sep) || s.includes('"') || s.indexOf('\n') >= 0)
+      ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+
+  const rutaNombre = rutaId
+    ? ((DB.rutas || []).find(r => r.id === rutaId) || {}).nombre || rutaId
+    : 'Todas las rutas';
+
+  const totalDeuda   = rows.reduce((s, r) => s + parseFloat(r[12] || 0), 0);
+  const totalAbonado = rows.reduce((s, r) => s + parseFloat(r[11] || 0), 0);
+  const totalVentas  = rows.reduce((s, r) => s + parseFloat(r[8]  || 0), 0);
+
+  const lines = [
+    esc('INFORME DE CARTERA — MONTELORO') + sep.repeat(headers.length - 1),
+    esc('Fecha de corte: ' + fechaCorte) + sep + esc('Ruta: ' + rutaNombre) + sep.repeat(headers.length - 2),
+    esc('Generado: ' + new Date().toLocaleDateString('es-CO')) + sep.repeat(headers.length - 1),
+    '',
+    headers.map(esc).join(sep),
+    ...rows.map(row => row.map(esc).join(sep)),
+    '',
+    // Totales
+    ['TOTALES', '', '', '', '', '', '', '',
+      totalVentas.toFixed(2), '', totalAbonado.toFixed(2), '', totalDeuda.toFixed(2)]
+      .map(esc).join(sep)
+  ];
+
+  const BOM = '﻿';
+  const blob = new Blob([BOM + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'cartera_' + rutaNombre.replace(/\s+/g, '_') + '_corte_' + fechaCorte + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ Cartera exportada — ' + rows.length + ' documento(s) con saldo pendiente');
+}
+
+function abonoInicialFmt(v) {
+  return parseFloat(v.abonoInicial || v.abono || 0).toFixed(2);
 }
 
 // ── Exportar Abonos a Excel ───────────────────────────────────
@@ -4080,7 +4227,8 @@ function renderInfProductos() {
 
 // ── Informe de Inventario ──────────────────────────────────────
 function renderInfInventario() {
-  const { rutaId } = infGetFiltros();
+  const { hasta, rutaId } = infGetFiltros();
+  const fechaCorte = hasta || new Date().toISOString().split('T')[0];
 
   const rutas = rutaId
     ? (DB.rutas || []).filter(r => r.id === rutaId)
@@ -4088,12 +4236,24 @@ function renderInfInventario() {
 
   if (!rutas.length) return '<div class="inf-empty">📭 Sin rutas configuradas</div>';
 
-  let html = '';
+  let html = `<div style="background:#fff3cd;border-radius:10px;padding:8px 14px;margin-bottom:14px;
+    font-size:0.78rem;color:#856404;text-align:center">
+    📅 Saldo al <strong>${fechaCorte}</strong>
+  </div>
+  <button onclick="exportarInventarioExcel()"
+    style="width:100%;padding:14px;background:#1d6f42;color:white;border:none;border-radius:12px;
+           font-size:0.92rem;font-weight:700;cursor:pointer;margin-bottom:14px;
+           display:flex;align-items:center;justify-content:center;gap:8px">
+    📥 Exportar inventario a Excel
+  </button>`;
+
+  let hayDatos = false;
   rutas.forEach(ruta => {
-    const vend = (DB.usuarios||[]).find(u => u.id === ruta.vendedorId);
-    const saldo = calcSaldo(ruta.vendedorId || '');
+    const vend  = (DB.usuarios||[]).find(u => u.id === ruta.vendedorId);
+    const saldo = calcSaldoHasta(ruta.vendedorId || '', fechaCorte);
     const prods = Object.values(saldo).filter(p => p.traslado > 0 || p.disponible !== 0);
     if (!prods.length) return;
+    hayDatos = true;
 
     const rows = prods.sort((a,b) => b.traslado - a.traslado).map(p => {
       const ok = p.disponible >= 0;
@@ -4120,7 +4280,80 @@ function renderInfInventario() {
     </div>`;
   });
 
-  return html || '<div class="inf-empty">📭 Sin movimientos de inventario</div>';
+  return hayDatos ? html : html + '<div class="inf-empty">📭 Sin movimientos hasta ' + fechaCorte + '</div>';
+}
+
+// ── Exportar Inventario a Excel ────────────────────────────────
+function exportarInventarioExcel() {
+  const { hasta, rutaId } = infGetFiltros();
+  const fechaCorte = hasta || new Date().toISOString().split('T')[0];
+
+  const rutas = rutaId
+    ? (DB.rutas || []).filter(r => r.id === rutaId)
+    : (DB.rutas || []);
+
+  if (!rutas.length) { showToast('⚠️ Sin rutas configuradas'); return; }
+
+  const rows = [];
+  rutas.forEach(ruta => {
+    const vend  = (DB.usuarios||[]).find(u => u.id === ruta.vendedorId);
+    const saldo = calcSaldoHasta(ruta.vendedorId || '', fechaCorte);
+    const prods = Object.values(saldo)
+      .filter(p => p.traslado > 0 || p.disponible !== 0)
+      .sort((a,b) => a.nombre.localeCompare(b.nombre));
+
+    prods.forEach(p => {
+      rows.push([
+        ruta.nombre,                           // Ruta
+        vend ? vend.nombre : 'Sin vendedor',   // Vendedor
+        p.productId || '',                     // ID Producto
+        p.nombre || '',                        // Producto
+        p.unidad || '',                        // Unidad
+        p.traslado || 0,                       // Entradas (traslados)
+        p.venta || 0,                          // Ventas
+        p.cambio || 0,                         // Cambios
+        p.cierreCambio || 0,                   // Cierre cambios
+        p.disponible || 0                      // Saldo disponible
+      ]);
+    });
+  });
+
+  if (!rows.length) { showToast('⚠️ Sin movimientos de inventario hasta ' + fechaCorte); return; }
+
+  const headers = [
+    'Ruta', 'Vendedor', 'ID Producto', 'Producto', 'Unidad',
+    'Entradas', 'Ventas', 'Cambios', 'Cierre Cambios', 'Saldo Disponible'
+  ];
+
+  const sep = ';';
+  const esc = val => {
+    const s = String(val === null || val === undefined ? '' : val);
+    return (s.includes(sep) || s.includes('"') || s.indexOf('\n') >= 0)
+      ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+
+  const rutaNombre = rutaId
+    ? ((DB.rutas||[]).find(r => r.id === rutaId)||{}).nombre || 'ruta'
+    : 'todas-rutas';
+
+  const lines = [
+    esc('INFORME DE INVENTARIO — MONTELORO') + sep.repeat(headers.length - 1),
+    esc('Fecha de corte: ' + fechaCorte) + sep + esc('Ruta: ' + (rutaId ? rutaNombre : 'Todas')) + sep.repeat(headers.length - 2),
+    esc('Generado: ' + new Date().toLocaleDateString('es-CO')) + sep.repeat(headers.length - 1),
+    '',
+    headers.map(esc).join(sep),
+    ...rows.map(row => row.map(esc).join(sep))
+  ];
+
+  const BOM = '﻿';
+  const blob = new Blob([BOM + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'inventario_' + rutaNombre.replace(/\s+/g, '_') + '_corte_' + fechaCorte + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ Inventario exportado — ' + rows.length + ' producto(s)');
 }
 
 function exportarVentasExcel() {
@@ -6014,7 +6247,7 @@ async function syncAll() {
   // Recuperar URL si por alguna razón no está en DB.config
   if (!DB.config.appsScriptUrl) {
     const respaldo = localStorage.getItem('ventaruta_url') ||
-      'https://script.google.com/macros/s/AKfycbycGwe2Ou2ZAiChE7zlTvnYekjdL_LIoUDu4X_48M8iEE-neZK9ao6UWnqbEaOQ7v4g1w/exec';
+      'https://script.google.com/macros/s/AKfycbwv1xgTc9DXCIeGaItY_LTDIUUVb4HC-_Fmpbtku-b543ddHggSYPOdUi0eE2_z8EXPkg/exec';
     if (respaldo) { DB.config.appsScriptUrl = respaldo; saveDB(); }
   }
   if (!DB.config.appsScriptUrl) { showToast('Configura la URL de Google Sheets primero'); return; }
@@ -6049,7 +6282,7 @@ function parseFecha(val) {
 async function syncFromSheets(showFeedback = false) {
   if (!DB.config.appsScriptUrl) {
     const respaldo = localStorage.getItem('ventaruta_url') ||
-      'https://script.google.com/macros/s/AKfycbycGwe2Ou2ZAiChE7zlTvnYekjdL_LIoUDu4X_48M8iEE-neZK9ao6UWnqbEaOQ7v4g1w/exec';
+      'https://script.google.com/macros/s/AKfycbwv1xgTc9DXCIeGaItY_LTDIUUVb4HC-_Fmpbtku-b543ddHggSYPOdUi0eE2_z8EXPkg/exec';
     if (respaldo) { DB.config.appsScriptUrl = respaldo; saveDB(); }
   }
   if (!DB.config.appsScriptUrl) return;
@@ -6654,6 +6887,47 @@ function getRutaIdDeVendedor(vendedorId) {
 
 // Calcula saldo de inventario por RUTA (no por vendedor)
 // Al cambiar el vendedor de una ruta, el saldo histórico se mantiene en la ruta
+// Calcula saldo de inventario de una ruta hasta una fecha de corte
+function calcSaldoHasta(vendedorId, fechaCorte) {
+  const rutaId = getRutaIdDeVendedor(vendedorId);
+  const movs = getInvMovimientos().filter(m => {
+    // Filtro por ruta/vendedor
+    let perteneceRuta;
+    if (rutaId) {
+      perteneceRuta = m.rutaId
+        ? m.rutaId.toString() === rutaId.toString()
+        : (m.vendedorId || '').toString() === (vendedorId || '').toString();
+    } else {
+      perteneceRuta = (m.vendedorId || '').toString() === (vendedorId || '').toString();
+    }
+    if (!perteneceRuta) return false;
+    // Filtro por fecha de corte
+    if (!fechaCorte) return true;
+    const fm = infNormalizarFecha(m.fecha || '');
+    return fm && fm <= fechaCorte;
+  });
+
+  const saldo = {};
+  movs.forEach(m => {
+    (m.productos || []).forEach(p => {
+      if (!saldo[p.productId]) saldo[p.productId] = {
+        productId: p.productId, nombre: p.nombre, unidad: p.unidad || '',
+        traslado: 0, venta: 0, cambio: 0, cierreCambio: 0, ventaCambio: 0
+      };
+      if (m.tipo === 'TRASLADO')      saldo[p.productId].traslado     += (p.qty || 0);
+      if (m.tipo === 'VENTA')         saldo[p.productId].venta        += (p.qty || 0);
+      if (m.tipo === 'CAMBIO')        saldo[p.productId].cambio       += (p.qty || 0);
+      if (m.tipo === 'CIERRE_CAMBIO') saldo[p.productId].cierreCambio += (p.qty || 0);
+      if (m.tipo === 'VENTA_CAMBIO')  saldo[p.productId].ventaCambio  += (p.qty || 0);
+    });
+  });
+  Object.values(saldo).forEach(s => {
+    s.disponible   = s.traslado - s.venta - s.cambio;
+    s.saldoCambios = s.cambio - s.cierreCambio - s.ventaCambio;
+  });
+  return saldo;
+}
+
 function calcSaldo(vendedorId) {
   // Obtener rutaId del vendedor — si no tiene ruta, usar vendedorId como fallback
   const rutaId = getRutaIdDeVendedor(vendedorId);
