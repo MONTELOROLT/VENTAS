@@ -733,6 +733,51 @@
   .cartera-client-saldo { font-family:'Syne',sans-serif; font-size: 1.2rem; font-weight: 800; color: #c0392b; }
   .cartera-client-saldo.al-dia { color: #27ae60; }
   .cartera-client-meta { font-size: 0.73rem; color: var(--ink-muted); margin-top: 2px; }
+  .cartera-ruta-group { margin-bottom:14px;border-radius:12px;overflow:hidden;border:1px solid var(--border); }
+  .cartera-ruta-header { display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#0f3460;color:white;cursor:pointer;user-select:none; }
+  .cartera-ruta-name { font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700; }
+  .cartera-ruta-meta { font-size:0.71rem;color:rgba(255,255,255,0.65);margin-top:2px; }
+  .cartera-ruta-deuda { font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#ffd6d6; }
+  .cartera-doc-row { display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s; }
+  .cartera-doc-row:last-child { border-bottom:none; }
+  .cartera-doc-row:hover { background:#f8f9fa; }
+  .cartera-doc-row.sel { background:#eef4ff; }
+  .cartera-doc-check { width:18px;height:18px;accent-color:var(--primary);flex-shrink:0;cursor:pointer; }
+  .cartera-doc-info { flex:1;min-width:0; }
+  .cartera-doc-cliente { font-weight:700;font-size:0.87rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .cartera-doc-id { font-size:0.7rem;color:var(--ink-muted);margin-top:1px; }
+  .cartera-doc-fecha { font-size:0.7rem;color:var(--ink-muted); }
+  .cartera-doc-saldo { font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;color:#c0392b;text-align:right;flex-shrink:0; }
+  .cartera-ruta-footer { padding:10px 14px;background:#f8f9fa;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center; }
+  /* ── INFORMES ── */
+  .inf-hero { background:linear-gradient(135deg,#1a3a8f,#0f3460);border-radius:var(--radius);padding:18px;color:white;margin-bottom:18px; }
+  .inf-hero-title { font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:4px; }
+  .inf-hero-sub { font-size:0.78rem;color:rgba(255,255,255,0.6); }
+  .inf-filtros { background:white;border-radius:var(--radius);padding:14px;margin-bottom:14px;border:1px solid var(--border); }
+  .inf-filtros-row { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px; }
+  .inf-filtros-row.one { grid-template-columns:1fr; }
+  .inf-label { font-size:0.72rem;font-weight:700;color:var(--ink-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em; }
+  .inf-tabs { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px; }
+  .inf-tab { padding:7px 14px;border-radius:20px;border:2px solid var(--border);background:white;font-size:0.78rem;font-weight:700;color:var(--ink-soft);cursor:pointer;transition:all 0.2s; }
+  .inf-tab.active { border-color:var(--primary);background:var(--primary);color:white; }
+  .inf-card { background:white;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:12px; }
+  .inf-card-header { padding:12px 16px;background:#f8f9fa;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center; }
+  .inf-card-title { font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:var(--ink); }
+  .inf-card-body { padding:14px 16px; }
+  .inf-row { display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border); }
+  .inf-row:last-child { border-bottom:none; }
+  .inf-row-label { font-size:0.84rem;font-weight:600;color:var(--ink);flex:1; }
+  .inf-row-sub { font-size:0.7rem;color:var(--ink-muted);margin-top:1px; }
+  .inf-row-val { font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;color:var(--primary);text-align:right; }
+  .inf-row-val.red { color:#c0392b; }
+  .inf-row-val.green { color:#27ae60; }
+  .inf-stat-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px; }
+  .inf-stat { background:#f8f9fa;border-radius:10px;padding:12px;text-align:center; }
+  .inf-stat-val { font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;color:var(--primary); }
+  .inf-stat-label { font-size:0.68rem;color:var(--ink-muted);margin-top:2px;font-weight:600;text-transform:uppercase; }
+  .inf-empty { text-align:center;padding:30px;color:var(--ink-muted);font-size:0.85rem; }
+  .inf-bar-wrap { margin-top:4px; }
+  .inf-bar { height:6px;border-radius:99px;background:var(--primary);margin-top:4px;transition:width 0.4s; }
 
   .cartera-venta-row {
     background: white; border-radius: var(--radius-sm);
@@ -835,7 +880,10 @@
         <div class="user-badge">
           <div class="user-avatar" id="user-avatar">?</div>
           <button class="logout-btn" onclick="resetAppData()" style="background:rgba(255,100,50,0.25);margin-right:4px" title="Limpiar datos locales">🗑️</button>
-          <button class="logout-btn" onclick="doLogout()">Salir</button>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
+            <button class="logout-btn" onclick="doLogout()">Salir</button>
+            <span style="font-size:0.5rem;color:rgba(255,255,255,0.4);letter-spacing:0.03em;font-weight:500;user-select:none">V-1.2.260316</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1300,6 +1348,10 @@
       <span class="nav-icon">💰</span>
       <span class="nav-label">Precios</span>
     </button>
+    <button class="nav-btn" onclick="showScreen('informes')" id="nav-informes" style="display:none">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Informes</span>
+    </button>
     <button class="nav-btn" onclick="showScreen('cartera')" id="nav-cartera" style="position:relative">
       <span class="nav-icon">💳</span>
       <span class="nav-label">Cartera</span>
@@ -1308,6 +1360,63 @@
   </nav>
 </div>
 
+
+  <!-- INFORMES -->
+  <div class="screen" id="screen-informes">
+    <div class="screen-content">
+
+      <div class="inf-hero">
+        <div class="inf-hero-title">📊 Informes</div>
+        <div class="inf-hero-sub">Análisis de ventas, cartera e inventario</div>
+      </div>
+
+      <!-- Tabs de tipo de informe -->
+      <div class="inf-tabs" id="inf-tabs">
+        <button class="inf-tab active" id="inf-tab-ventas"    onclick="setInfTab('ventas')">📈 Ventas</button>
+        <button class="inf-tab"        id="inf-tab-cartera"   onclick="setInfTab('cartera')">💳 Cartera</button>
+        <button class="inf-tab"        id="inf-tab-productos" onclick="setInfTab('productos')">📦 Productos</button>
+        <button class="inf-tab"        id="inf-tab-inventario" onclick="setInfTab('inventario')">🏭 Inventario</button>
+      </div>
+
+      <!-- Filtros -->
+      <div class="inf-filtros">
+        <div class="inf-filtros-row">
+          <div>
+            <div class="inf-label">Desde</div>
+            <input type="date" id="inf-fecha-desde" class="form-input" style="padding:8px 10px;font-size:0.83rem" oninput="renderInforme()">
+          </div>
+          <div>
+            <div class="inf-label">Hasta</div>
+            <input type="date" id="inf-fecha-hasta" class="form-input" style="padding:8px 10px;font-size:0.83rem" oninput="renderInforme()">
+          </div>
+        </div>
+        <div class="inf-filtros-row">
+          <div>
+            <div class="inf-label">Ruta</div>
+            <select id="inf-ruta" class="form-select" style="padding:8px 10px;font-size:0.83rem" onchange="renderInforme()">
+              <option value="">Todas las rutas</option>
+            </select>
+          </div>
+          <div>
+            <div class="inf-label">Vendedor</div>
+            <select id="inf-vendedor" class="form-select" style="padding:8px 10px;font-size:0.83rem" onchange="renderInforme()">
+              <option value="">Todos</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="infSetPeriodo('hoy')"      class="inf-tab" style="font-size:0.72rem;padding:5px 10px">Hoy</button>
+          <button onclick="infSetPeriodo('semana')"   class="inf-tab" style="font-size:0.72rem;padding:5px 10px">Esta semana</button>
+          <button onclick="infSetPeriodo('mes')"      class="inf-tab" style="font-size:0.72rem;padding:5px 10px">Este mes</button>
+          <button onclick="infSetPeriodo('trimestre')" class="inf-tab" style="font-size:0.72rem;padding:5px 10px">Trimestre</button>
+          <button onclick="infSetPeriodo('anio')"     class="inf-tab" style="font-size:0.72rem;padding:5px 10px">Este año</button>
+        </div>
+      </div>
+
+      <!-- Contenido del informe -->
+      <div id="inf-content"></div>
+    </div>
+  </div>
 
   <!-- CARTERA -->
   <div class="screen" id="screen-cartera">
@@ -1332,9 +1441,18 @@
       </div>
 
       <!-- Búsqueda -->
-      <div class="product-search" style="margin-bottom:14px">
+      <div class="product-search" style="margin-bottom:10px">
         <span class="search-icon">🔍</span>
-        <input type="text" id="cartera-search" placeholder="Buscar cliente..." oninput="renderCarteraClientes()">
+        <input type="text" id="cartera-search" placeholder="Cliente, ID venta o N° factura..." oninput="renderCarteraClientes()">
+      </div>
+
+      <!-- Filtro por ruta -->
+      <div id="cartera-filtro-ruta-wrap" style="margin-bottom:12px;display:none">
+        <div class="select-wrap">
+          <select id="cartera-filtro-ruta" class="form-select" style="font-size:0.83rem;padding:9px 14px" onchange="renderCarteraClientes()">
+            <option value="">🗺 Todas las rutas</option>
+          </select>
+        </div>
       </div>
 
       <!-- Tabs -->
@@ -1344,7 +1462,7 @@
         <button class="cartera-tab" id="tab-cartera-aldía" onclick="setCarteraTab('aldía')">Al día</button>
       </div>
 
-      <!-- Lista clientes -->
+      <!-- Lista agrupada por ruta -->
       <div id="cartera-clientes-list"></div>
     </div>
   </div>
@@ -1937,6 +2055,7 @@ function startApp() {
   }
   navShow('nav-cartera', puedeVerCartera);
   // Solo admin ve usuarios
+  navShow('nav-informes',    esAdmin() || esSupervisor());
   navShow('nav-usuarios',   puedeHacer('ver:usuarios'));
   // Admin y supervisor ven listas y rutas
   navShow('nav-listas',     puedeHacer('ver:listas'));
@@ -1970,6 +2089,7 @@ function showScreen(name) {
   });
   const navBtn = document.getElementById('nav-' + name);
   if (navBtn) navBtn.classList.add('active');
+  if (name === 'informes') { initInformes(); }
   if (name === 'cartera') { initCartera(); }
   if (name === 'venta') initSaleScreen();
   if (name === 'historial') { initHistFilters(); renderSalesList(); }
@@ -3503,8 +3623,621 @@ function setCarteraTab(tab) {
   renderCarteraClientes();
 }
 
+// ═══════════════════════════════════════════════════════════════
+// MÓDULO DE INFORMES
+// ═══════════════════════════════════════════════════════════════
+let _infTab = 'ventas';
+
+function initInformes() {
+  // Poblar selectores ruta y vendedor
+  const selRuta = document.getElementById('inf-ruta');
+  const selVend = document.getElementById('inf-vendedor');
+  if (selRuta) {
+    selRuta.innerHTML = '<option value="">Todas las rutas</option>' +
+      (DB.rutas || []).map(r => `<option value="${r.id}">${r.nombre}</option>`).join('');
+  }
+  if (selVend) {
+    const vends = (DB.usuarios || []).filter(u => u.rol === 'vendedor' && u.estado === 'activo');
+    selVend.innerHTML = '<option value="">Todos</option>' +
+      vends.map(u => `<option value="${u.id}">${u.nombre}</option>`).join('');
+  }
+  // Fechas por defecto: mes actual
+  infSetPeriodo('mes', false);
+  setInfTab(_infTab);
+}
+
+function infSetPeriodo(periodo, render = true) {
+  const hoy = new Date();
+  let desde, hasta;
+  hasta = hoy.toISOString().split('T')[0];
+
+  if (periodo === 'hoy') {
+    desde = hasta;
+  } else if (periodo === 'semana') {
+    const d = new Date(hoy);
+    d.setDate(d.getDate() - d.getDay() + 1);
+    desde = d.toISOString().split('T')[0];
+  } else if (periodo === 'mes') {
+    desde = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-01`;
+  } else if (periodo === 'trimestre') {
+    const d = new Date(hoy);
+    d.setMonth(d.getMonth() - 2);
+    d.setDate(1);
+    desde = d.toISOString().split('T')[0];
+  } else if (periodo === 'anio') {
+    desde = `${hoy.getFullYear()}-01-01`;
+  }
+
+  const dEl = document.getElementById('inf-fecha-desde');
+  const hEl = document.getElementById('inf-fecha-hasta');
+  if (dEl) dEl.value = desde;
+  if (hEl) hEl.value = hasta;
+  if (render) renderInforme();
+}
+
+function setInfTab(tab) {
+  _infTab = tab;
+  ['ventas','cartera','productos','inventario'].forEach(t => {
+    const el = document.getElementById('inf-tab-' + t);
+    if (el) el.classList.toggle('active', t === tab);
+  });
+  renderInforme();
+}
+
+function infGetFiltros() {
+  const desde   = document.getElementById('inf-fecha-desde')?.value || '';
+  const hasta   = document.getElementById('inf-fecha-hasta')?.value || '';
+  const rutaId  = document.getElementById('inf-ruta')?.value || '';
+  const vendId  = document.getElementById('inf-vendedor')?.value || '';
+  return { desde, hasta, rutaId, vendId };
+}
+
+// Normaliza cualquier fecha a 'YYYY-MM-DD' para comparación
+function infNormalizarFecha(fechaRaw) {
+  if (!fechaRaw) return '';
+  const s = fechaRaw.toString().trim();
+  // ISO: 2026-03-16 o 2026-03-16T...
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0, 10);
+  // Formato DD/MM/YYYY o DD-MM-YYYY
+  if (/^\d{1,2}[\/-]\d{1,2}[\/-]\d{4}$/.test(s)) {
+    const p = s.split(/[\/-]/);
+    return p[2] + '-' + p[1].padStart(2,'0') + '-' + p[0].padStart(2,'0');
+  }
+  // Cualquier otro formato → intentar con Date()
+  try {
+    const dt = new Date(s);
+    if (!isNaN(dt.getTime())) {
+      return dt.getFullYear() + '-' +
+             String(dt.getMonth()+1).padStart(2,'0') + '-' +
+             String(dt.getDate()).padStart(2,'0');
+    }
+  } catch(e) {}
+  return '';
+}
+
+function infFechaOk(fechaRaw, desde, hasta) {
+  if (!fechaRaw) return true;
+  const d = infNormalizarFecha(fechaRaw);
+  if (!d) return true; // no se pudo parsear → incluir
+  if (desde && d < desde) return false;
+  if (hasta && d > hasta) return false;
+  return true;
+}
+
+function renderInforme() {
+  const el = document.getElementById('inf-content');
+  if (!el) return;
+  if (_infTab === 'ventas')     el.innerHTML = renderInfVentas();
+  else if (_infTab === 'cartera')    el.innerHTML = renderInfCartera();
+  else if (_infTab === 'productos')  el.innerHTML = renderInfProductos();
+  else if (_infTab === 'inventario') el.innerHTML = renderInfInventario();
+}
+
+// ── Informe de Ventas ──────────────────────────────────────────
+function renderInfVentas() {
+  const { desde, hasta, rutaId, vendId } = infGetFiltros();
+
+  let ventas = DB.sales.filter(s =>
+    infFechaOk(s.fecha, desde, hasta) && !s.esCambio
+  );
+  if (rutaId) ventas = ventas.filter(s => s.rutaId === rutaId || (DB.rutaClientes||[]).some(rc => rc.rutaId === rutaId && rc.clientId === s.clientId));
+  if (vendId) ventas = ventas.filter(s => s.usuarioId === vendId || s.vendedorId === vendId);
+
+  if (!ventas.length) return '<div class="inf-empty">📭 Sin ventas en el período seleccionado</div>';
+
+  const totalVentas     = ventas.reduce((s, v) => s + (v.total || 0), 0);
+  const totalCredito    = ventas.filter(v => v.tipoPago === 'CREDITO').reduce((s, v) => s + (v.total || 0), 0);
+  const totalContado    = ventas.filter(v => v.tipoPago === 'CONTADO').reduce((s, v) => s + (v.total || 0), 0);
+  const totalPendiente  = ventas.filter(v => v.tipoPago === 'CREDITO').reduce((s, v) => s + calcSaldoVenta(v.id, v.total).saldoActual, 0);
+
+  // Por ruta
+  const porRuta = {};
+  ventas.forEach(v => {
+    const rc   = (DB.rutaClientes||[]).find(r => r.clientId === v.clientId);
+    const ruta = rc ? (DB.rutas||[]).find(r => r.id === rc.rutaId) : null;
+    const key  = ruta ? ruta.nombre : 'Sin ruta';
+    if (!porRuta[key]) porRuta[key] = { total: 0, count: 0 };
+    porRuta[key].total += v.total || 0;
+    porRuta[key].count++;
+  });
+
+  // Por vendedor
+  const porVend = {};
+  ventas.forEach(v => {
+    const key = v.vendedor || 'Desconocido';
+    if (!porVend[key]) porVend[key] = { total: 0, count: 0 };
+    porVend[key].total += v.total || 0;
+    porVend[key].count++;
+  });
+
+  const maxRuta = Math.max(...Object.values(porRuta).map(r => r.total), 1);
+  const maxVend = Math.max(...Object.values(porVend).map(r => r.total), 1);
+
+  const rutaRows = Object.entries(porRuta).sort((a,b) => b[1].total - a[1].total).map(([nom, d]) =>
+    `<div class="inf-row">
+      <div class="inf-row-label">
+        ${nom}
+        <div class="inf-bar-wrap"><div class="inf-bar" style="width:${Math.round(d.total*100/maxRuta)}%"></div></div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;margin-left:12px">
+        <div class="inf-row-val">$${fmt(d.total)}</div>
+        <div style="font-size:0.68rem;color:var(--ink-muted)">${d.count} vta${d.count!==1?'s':''}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  const vendRows = Object.entries(porVend).sort((a,b) => b[1].total - a[1].total).map(([nom, d]) =>
+    `<div class="inf-row">
+      <div class="inf-row-label">
+        ${nom}
+        <div class="inf-bar-wrap"><div class="inf-bar" style="width:${Math.round(d.total*100/maxVend)}%;background:#9b59b6"></div></div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;margin-left:12px">
+        <div class="inf-row-val" style="color:#9b59b6">$${fmt(d.total)}</div>
+        <div style="font-size:0.68rem;color:var(--ink-muted)">${d.count} vta${d.count!==1?'s':''}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  return `
+    <div class="inf-stat-grid">
+      <div class="inf-stat">
+        <div class="inf-stat-val">$${fmt(totalVentas)}</div>
+        <div class="inf-stat-label">Total vendido</div>
+      </div>
+      <div class="inf-stat">
+        <div class="inf-stat-val">${ventas.length}</div>
+        <div class="inf-stat-label">Nº de ventas</div>
+      </div>
+      <div class="inf-stat">
+        <div class="inf-stat-val" style="color:#27ae60">$${fmt(totalContado)}</div>
+        <div class="inf-stat-label">Contado</div>
+      </div>
+      <div class="inf-stat">
+        <div class="inf-stat-val" style="color:#c0392b">$${fmt(totalPendiente)}</div>
+        <div class="inf-stat-label">Cartera pendiente</div>
+      </div>
+    </div>
+
+    <!-- Botón exportar Excel -->
+    <button onclick="exportarVentasExcel()"
+      style="width:100%;padding:14px;background:#1d6f42;color:white;border:none;border-radius:12px;
+             font-size:0.95rem;font-weight:700;cursor:pointer;margin-bottom:14px;
+             display:flex;align-items:center;justify-content:center;gap:8px">
+      📥 Exportar detalle a Excel
+    </button>
+
+    <div class="inf-card">
+      <div class="inf-card-header">
+        <div class="inf-card-title">📈 Por ruta</div>
+      </div>
+      <div class="inf-card-body">${rutaRows || '<div class="inf-empty">Sin datos</div>'}</div>
+    </div>
+    <div class="inf-card">
+      <div class="inf-card-header">
+        <div class="inf-card-title">👤 Por vendedor</div>
+      </div>
+      <div class="inf-card-body">${vendRows || '<div class="inf-empty">Sin datos</div>'}</div>
+    </div>`;
+}
+
+// ── Informe de Cartera ─────────────────────────────────────────
+function renderInfCartera() {
+  const { rutaId, vendId } = infGetFiltros();
+
+  let ventasCredito = DB.sales.filter(s => s.tipoPago === 'CREDITO');
+  if (vendId) ventasCredito = ventasCredito.filter(s => s.usuarioId === vendId || s.vendedorId === vendId);
+
+  // Agrupar por cliente
+  const porCliente = {};
+  ventasCredito.forEach(v => {
+    const { saldoActual } = calcSaldoVenta(v.id, v.total);
+    if (saldoActual <= 0) return;
+    const rc   = (DB.rutaClientes||[]).find(r => r.clientId === v.clientId);
+    const ruta = rc ? (DB.rutas||[]).find(r => r.id === rc.rutaId) : null;
+    if (rutaId && (!ruta || ruta.id !== rutaId)) return;
+    if (!porCliente[v.clientId]) porCliente[v.clientId] = { nombre: v.clientNombre, rutaNombre: ruta ? ruta.nombre : 'Sin ruta', deuda: 0, docs: 0 };
+    porCliente[v.clientId].deuda += saldoActual;
+    porCliente[v.clientId].docs++;
+  });
+
+  const clientes = Object.values(porCliente).sort((a,b) => b.deuda - a.deuda);
+  if (!clientes.length) return '<div class="inf-empty">✅ Sin cartera pendiente</div>';
+
+  const totalDeuda = clientes.reduce((s, c) => s + c.deuda, 0);
+  const maxDeuda   = Math.max(...clientes.map(c => c.deuda), 1);
+
+  // Agrupar por ruta
+  const porRuta = {};
+  clientes.forEach(c => {
+    if (!porRuta[c.rutaNombre]) porRuta[c.rutaNombre] = { deuda: 0, count: 0 };
+    porRuta[c.rutaNombre].deuda += c.deuda;
+    porRuta[c.rutaNombre].count++;
+  });
+
+  const rutaRows = Object.entries(porRuta).sort((a,b) => b[1].deuda - a[1].deuda).map(([nom, d]) =>
+    `<div class="inf-row">
+      <div class="inf-row-label">${nom}<div class="inf-row-sub">${d.count} cliente${d.count!==1?'s':''}</div></div>
+      <div class="inf-row-val red">$${fmt(d.deuda)}</div>
+    </div>`
+  ).join('');
+
+  const clientRows = clientes.slice(0,15).map(c =>
+    `<div class="inf-row">
+      <div class="inf-row-label">
+        ${c.nombre}
+        <div class="inf-row-sub">🗺 ${c.rutaNombre} · ${c.docs} doc${c.docs!==1?'s':''}</div>
+        <div class="inf-bar-wrap"><div class="inf-bar" style="width:${Math.round(c.deuda*100/maxDeuda)}%;background:#c0392b"></div></div>
+      </div>
+      <div class="inf-row-val red" style="flex-shrink:0;margin-left:12px">$${fmt(c.deuda)}</div>
+    </div>`
+  ).join('');
+
+  return `
+    <div class="inf-stat-grid">
+      <div class="inf-stat">
+        <div class="inf-stat-val" style="color:#c0392b">$${fmt(totalDeuda)}</div>
+        <div class="inf-stat-label">Deuda total</div>
+      </div>
+      <div class="inf-stat">
+        <div class="inf-stat-val">${clientes.length}</div>
+        <div class="inf-stat-label">Clientes con deuda</div>
+      </div>
+    </div>
+    <button onclick="exportarAbonosExcel()"
+      style="width:100%;padding:14px;background:#1d6f42;color:white;border:none;border-radius:12px;
+             font-size:0.95rem;font-weight:700;cursor:pointer;margin-bottom:14px;
+             display:flex;align-items:center;justify-content:center;gap:8px">
+      📥 Exportar abonos a Excel
+    </button>
+    <div class="inf-card">
+      <div class="inf-card-header"><div class="inf-card-title">💳 Cartera por ruta</div></div>
+      <div class="inf-card-body">${rutaRows}</div>
+    </div>
+    <div class="inf-card">
+      <div class="inf-card-header"><div class="inf-card-title">👥 Top clientes con deuda</div></div>
+      <div class="inf-card-body">${clientRows}</div>
+    </div>`;
+}
+
+// ── Exportar Abonos a Excel ───────────────────────────────────
+function exportarAbonosExcel() {
+  const { desde, hasta, rutaId } = infGetFiltros();
+
+  // Filtrar abonos por fecha
+  const todosAbonos = DB.abonos || [];
+  let abonos = todosAbonos.filter(a => infFechaOk(a.fecha, desde, hasta));
+
+  if (!todosAbonos.length) { showToast('⚠️ No hay abonos registrados — presiona Actualizar'); return; }
+  if (!abonos.length) {
+    const ej = todosAbonos[0];
+    const ejFecha = infNormalizarFecha(ej.fecha || '');
+    showToast('⚠️ Sin abonos en el período. Hay ' + todosAbonos.length + ' abonos. Fecha ejemplo: ' + ejFecha);
+    return;
+  }
+
+  // Filtrar por ruta si se seleccionó
+  if (rutaId) {
+    const clientesDeRuta = (DB.rutaClientes || [])
+      .filter(rc => rc.rutaId === rutaId)
+      .map(rc => rc.clientId);
+    abonos = abonos.filter(a => clientesDeRuta.includes(a.clientId));
+    if (!abonos.length) { showToast('⚠️ Sin abonos para la ruta seleccionada en ese período'); return; }
+  }
+
+  // Ordenar por fecha
+  abonos = abonos.sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+  // Construir filas
+  const rows = abonos.map(a => {
+    const venta   = DB.sales.find(s => s.id === a.ventaId) || {};
+    const client  = DB.clients.find(cl => cl.id === a.clientId) || {};
+    const rc      = (DB.rutaClientes || []).find(r => r.clientId === a.clientId);
+    const ruta    = rc ? (DB.rutas || []).find(r => r.id === rc.rutaId) : null;
+    // La fecha puede venir como 'YYYY-MM-DD', ISO o texto de Date de Sheets
+    const fechaNorm = infNormalizarFecha(a.fecha || '');
+    const dt = fechaNorm ? new Date(fechaNorm + 'T' + (a.hora || '00:00:00')) : parseFecha(a.fecha);
+    const fechaFmt = fechaNorm
+      ? fechaNorm.split('-').reverse().join('/')   // DD/MM/YYYY
+      : parseFecha(a.fecha).toLocaleDateString('es-CO', {day:'2-digit', month:'2-digit', year:'numeric'});
+    const horaFmt = a.hora || (dt ? dt.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'}) : '');
+
+    return [
+      fechaFmt,                                    // Fecha operación
+      horaFmt,                                     // Hora
+      a.ventaId || '',                             // ID Venta
+      venta.numFactura || '',                      // N° Factura
+      venta.clientNombre || client.nombre || '',   // Nombre cliente
+      a.clientId || '',                            // ID cliente
+      client.ciudad || '',                         // Ciudad
+      ruta ? ruta.nombre : '',                     // Ruta
+      a.vendedorNombre || '',                      // Recibido por
+      a.monto || 0,                                // Total abono
+      a.nota || ''                                 // Nota
+    ];
+  });
+
+  const headers = [
+    'Fecha', 'Hora', 'ID Venta', 'N° Factura',
+    'Cliente', 'ID Cliente', 'Ciudad', 'Ruta',
+    'Recibido por', 'Total Abono', 'Nota'
+  ];
+
+  const sep = ';';
+  const esc = val => {
+    const s = String(val === null || val === undefined ? '' : val);
+    return (s.includes(sep) || s.includes('"') || s.includes('\n'))
+      ? '"' + s.replace(/"/g, '""') + '"'
+      : s;
+  };
+
+  const rutaNombre = rutaId
+    ? ((DB.rutas || []).find(r => r.id === rutaId) || {}).nombre || rutaId
+    : 'Todas las rutas';
+
+  const totalAbonos = rows.reduce((s, r) => s + parseFloat(r[9] || 0), 0);
+
+  const lines = [
+    esc('INFORME DE ABONOS — MONTELORO') + sep.repeat(headers.length - 1),
+    esc('Período: ' + (desde || 'inicio') + ' al ' + (hasta || 'hoy')) +
+      sep + esc('Ruta: ' + rutaNombre) + sep.repeat(headers.length - 2),
+    '',
+    headers.map(esc).join(sep),
+    ...rows.map(row => row.map(esc).join(sep)),
+    '',
+    ['', '', '', '', '', '', '', '', 'TOTAL', totalAbonos.toFixed(2), ''].map(esc).join(sep)
+  ];
+
+  const BOM = '﻿';
+  const blob = new Blob([BOM + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'abonos_' + rutaNombre.replace(/\s+/g, '_') + '_' + (desde || 'inicio') + '_al_' + (hasta || 'hoy') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ Excel generado — ' + rows.length + ' abono(s) exportado(s)');
+}
+
+// ── Informe de Productos ───────────────────────────────────────
+function renderInfProductos() {
+  const { desde, hasta, rutaId, vendId } = infGetFiltros();
+
+  let ventas = DB.sales.filter(s =>
+    infFechaOk(s.fecha, desde, hasta) && !s.esCambio
+  );
+  if (rutaId) ventas = ventas.filter(s => (DB.rutaClientes||[]).some(rc => rc.rutaId === rutaId && rc.clientId === s.clientId));
+  if (vendId) ventas = ventas.filter(s => s.usuarioId === vendId || s.vendedorId === vendId);
+
+  // Acumular por producto
+  const porProd = {};
+  ventas.forEach(v => {
+    (v.items || []).forEach(item => {
+      const key = item.productId || item.nombre;
+      if (!porProd[key]) porProd[key] = { nombre: item.nombre || key, qty: 0, total: 0, unidad: item.unidad || '' };
+      porProd[key].qty   += item.qty || 0;
+      porProd[key].total += (item.qty || 0) * (item.price || item.precio || 0);
+    });
+  });
+
+  const prods = Object.values(porProd).sort((a,b) => b.total - a.total);
+  if (!prods.length) return '<div class="inf-empty">📭 Sin datos de productos en el período</div>';
+
+  const totalProds = prods.reduce((s,p) => s + p.total, 0);
+  const maxVal = Math.max(...prods.map(p => p.total), 1);
+
+  const rows = prods.slice(0,20).map((p, i) =>
+    `<div class="inf-row">
+      <div class="inf-row-label">
+        <span style="font-size:0.68rem;background:#eef4ff;color:#1a3a8f;border-radius:99px;padding:1px 6px;margin-right:6px">#${i+1}</span>
+        ${p.nombre}
+        <div class="inf-row-sub">${fmt(p.qty)} ${p.unidad}</div>
+        <div class="inf-bar-wrap"><div class="inf-bar" style="width:${Math.round(p.total*100/maxVal)}%;background:#27ae60"></div></div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;margin-left:12px">
+        <div class="inf-row-val" style="color:#27ae60">$${fmt(p.total)}</div>
+        <div style="font-size:0.68rem;color:var(--ink-muted)">${Math.round(p.total*100/totalProds)}%</div>
+      </div>
+    </div>`
+  ).join('');
+
+  return `
+    <div class="inf-stat-grid">
+      <div class="inf-stat">
+        <div class="inf-stat-val">${prods.length}</div>
+        <div class="inf-stat-label">Productos vendidos</div>
+      </div>
+      <div class="inf-stat">
+        <div class="inf-stat-val" style="color:#27ae60">$${fmt(totalProds)}</div>
+        <div class="inf-stat-label">Total en período</div>
+      </div>
+    </div>
+    <div class="inf-card">
+      <div class="inf-card-header"><div class="inf-card-title">📦 Top productos (por valor)</div></div>
+      <div class="inf-card-body">${rows}</div>
+    </div>`;
+}
+
+// ── Informe de Inventario ──────────────────────────────────────
+function renderInfInventario() {
+  const { rutaId } = infGetFiltros();
+
+  const rutas = rutaId
+    ? (DB.rutas || []).filter(r => r.id === rutaId)
+    : (DB.rutas || []);
+
+  if (!rutas.length) return '<div class="inf-empty">📭 Sin rutas configuradas</div>';
+
+  let html = '';
+  rutas.forEach(ruta => {
+    const vend = (DB.usuarios||[]).find(u => u.id === ruta.vendedorId);
+    const saldo = calcSaldo(ruta.vendedorId || '');
+    const prods = Object.values(saldo).filter(p => p.traslado > 0 || p.disponible !== 0);
+    if (!prods.length) return;
+
+    const rows = prods.sort((a,b) => b.traslado - a.traslado).map(p => {
+      const ok = p.disponible >= 0;
+      return `<div class="inf-row">
+        <div class="inf-row-label">
+          ${p.nombre}
+          <div class="inf-row-sub">${p.unidad} · 🚚 ${p.traslado} tral · 🛒 ${p.venta} vta · 🔄 ${p.cambio} camb</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px">
+          <div class="inf-row-val ${ok ? 'green' : 'red'}">${p.disponible} disp.</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    html += `<div class="inf-card">
+      <div class="inf-card-header">
+        <div>
+          <div class="inf-card-title">🗺 ${ruta.nombre}</div>
+          <div style="font-size:0.7rem;color:var(--ink-muted)">${vend ? '👤 ' + vend.nombre : 'Sin vendedor asignado'}</div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--ink-muted)">${prods.length} prod.</div>
+      </div>
+      <div class="inf-card-body">${rows}</div>
+    </div>`;
+  });
+
+  return html || '<div class="inf-empty">📭 Sin movimientos de inventario</div>';
+}
+
+function exportarVentasExcel() {
+  const { desde, hasta, rutaId } = infGetFiltros();
+
+  // Filtrar ventas igual que el informe
+  let ventas = DB.sales.filter(s =>
+    infFechaOk(s.fecha, desde, hasta) && !s.esCambio
+  );
+  if (rutaId) ventas = ventas.filter(s =>
+    s.rutaId === rutaId ||
+    (DB.rutaClientes||[]).some(rc => rc.rutaId === rutaId && rc.clientId === s.clientId)
+  );
+
+  if (!ventas.length) { showToast('⚠️ Sin ventas en el período seleccionado'); return; }
+
+  // Construir filas de detalle (una por item)
+  const rows = [];
+  ventas.sort((a,b) => a.fecha.localeCompare(b.fecha)).forEach(v => {
+    const client  = DB.clients.find(c => c.id === v.clientId) || {};
+    const fechaFmt = parseFecha(v.fecha).toLocaleDateString('es-CO', {day:'2-digit',month:'2-digit',year:'numeric'});
+    const ruta    = (() => {
+      const rc = (DB.rutaClientes||[]).find(r => r.clientId === v.clientId);
+      return rc ? ((DB.rutas||[]).find(r => r.id === rc.rutaId)||{}).nombre || '' : '';
+    })();
+
+    (v.items || []).forEach(item => {
+      const precio    = parseFloat(item.price || item.precio || 0);
+      const qty       = parseFloat(item.qty || 0);
+      const descPct   = parseFloat(item.descPct || 0);
+      const bruto     = qty * precio;
+      const descValor = bruto * descPct / 100;
+      const neto      = bruto - descValor;
+
+      rows.push([
+        fechaFmt,                           // Fecha operación
+        v.id || '',                         // ID Venta
+        v.numFactura || '',                 // N° Factura
+        v.clientNombre || '',               // Nombre cliente
+        v.clientId || '',                   // ID cliente
+        client.ciudad || v.ciudad || '',    // Ciudad
+        ruta,                               // Ruta
+        v.vendedor || '',                   // Vendedor
+        v.tipoPago || '',                   // Tipo pago
+        item.productId || '',               // ID Producto
+        item.nombre || '',                  // Producto
+        item.unidad || '',                  // Unidad
+        qty,                                // Cantidad
+        precio,                             // Precio unitario
+        descPct,                            // Descuento %
+        descValor.toFixed(2),               // Descuento $
+        neto.toFixed(2)                     // Neto ítem
+      ]);
+    });
+  });
+
+  // Cabeceras
+  const headers = [
+    'Fecha', 'ID Venta', 'N° Factura', 'Cliente', 'ID Cliente',
+    'Ciudad', 'Ruta', 'Vendedor', 'Tipo Pago',
+    'ID Producto', 'Producto', 'Unidad',
+    'Cantidad', 'Precio Unit.', 'Desc %', 'Desc $', 'Neto Ítem'
+  ];
+
+  // Construir CSV con separador de punto y coma (compatible Excel Colombia)
+  const sep = ';';
+  const esc = val => {
+    const s = String(val === null || val === undefined ? '' : val);
+    return s.includes(sep) || s.includes('"') || s.includes('\n')
+      ? '"' + s.replace(/"/g, '""') + '"'
+      : s;
+  };
+
+  const lines = [
+    // Título
+    esc('INFORME DE VENTAS — MONTELORO') + sep.repeat(headers.length - 1),
+    esc('Período: ' + (desde || 'inicio') + ' al ' + (hasta || 'hoy')) +
+      sep + esc('Ruta: ' + ((DB.rutas||[]).find(r=>r.id===rutaId)||{}).nombre || 'Todas') +
+      sep.repeat(headers.length - 2),
+    '',
+    headers.map(esc).join(sep),
+    ...rows.map(row => row.map(esc).join(sep))
+  ];
+
+  // Totales al final
+  const totalNeto = rows.reduce((s, r) => s + parseFloat(r[16] || 0), 0);
+  lines.push(
+    ['', '', '', '', '', '', '', '', '', '', '', 'TOTAL', '', '', '', '', totalNeto.toFixed(2)]
+      .map(esc).join(sep)
+  );
+
+  // Descargar
+  const BOM = '﻿'; // BOM para que Excel abra UTF-8 correctamente
+  const blob = new Blob([BOM + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const nombreRuta = rutaId ? ((DB.rutas||[]).find(r=>r.id===rutaId)||{}).nombre || rutaId : 'todas-rutas';
+  a.href = url;
+  a.download = 'ventas_' + nombreRuta + '_' + (desde||'inicio') + '_al_' + (hasta||'hoy') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✅ Excel generado — ' + rows.length + ' registros exportados');
+}
+
 function initCartera() {
   _carteraTab = 'pendientes';
+  _carteraSeleccion = new Set();
+  // Poblar selector de rutas (solo admin/supervisor)
+  const wrapRuta = document.getElementById('cartera-filtro-ruta-wrap');
+  const selRuta  = document.getElementById('cartera-filtro-ruta');
+  if (puedeHacer('ventas:ver:todas') && wrapRuta && selRuta) {
+    wrapRuta.style.display = 'block';
+    selRuta.innerHTML = '<option value="">🗺 Todas las rutas</option>' +
+      (DB.rutas || []).map(r => `<option value="${r.id}">🗺 ${r.nombre}</option>`).join('');
+  } else if (wrapRuta) {
+    wrapRuta.style.display = 'none';
+  }
   setCarteraTab('pendientes');
   renderCarteraHero();
   renderCarteraClientes();
@@ -3522,46 +4255,175 @@ function renderCarteraHero() {
   if (ca) ca.textContent = abonosCount;
 }
 
+// Selección de docs para abono
+let _carteraSeleccion = new Set();
+
 function renderCarteraClientes() {
   renderCarteraHero();
   const listEl = document.getElementById('cartera-clientes-list');
   if (!listEl) return;
 
-  const busqueda = (document.getElementById('cartera-search')?.value || '').toLowerCase();
-  let clientes = calcCarteraPorCliente();
+  const busqueda   = (document.getElementById('cartera-search')?.value || '').trim().toLowerCase();
+  const rutaFiltro = (document.getElementById('cartera-filtro-ruta')?.value || '');
 
-  // Filtro por tab
-  if (_carteraTab === 'pendientes') clientes = clientes.filter(c => c.totalDeuda > 0);
-  else if (_carteraTab === 'aldía')  clientes = clientes.filter(c => c.totalDeuda === 0);
+  // Ventas a crédito con filtro de rol
+  let ventasCredito = DB.sales.filter(s => s.tipoPago === 'CREDITO');
+  if (!puedeHacer('ventas:ver:todas')) {
+    const misClientes = getMisClientes();
+    ventasCredito = ventasCredito.filter(v =>
+      misClientes.includes(v.clientId) || v.usuarioId === (currentUser && currentUser.id));
+  }
 
-  // Filtro búsqueda
-  if (busqueda) clientes = clientes.filter(c => c.nombre.toLowerCase().includes(busqueda));
+  // Filtro búsqueda: cliente, ID venta o N° factura
+  if (busqueda) {
+    ventasCredito = ventasCredito.filter(v =>
+      (v.clientNombre || '').toLowerCase().includes(busqueda) ||
+      (v.id || '').toLowerCase().includes(busqueda) ||
+      (v.numFactura || '').toLowerCase().includes(busqueda)
+    );
+  }
 
-  if (!clientes.length) {
-    listEl.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">${_carteraTab === 'aldía' ? '✅' : '💳'}</div>
-      <div class="empty-title">${_carteraTab === 'aldía' ? 'Sin clientes al día' : 'Sin cartera pendiente'}</div>
-      <div class="empty-desc">${_carteraTab === 'pendientes' ? 'Todos tus créditos están al día' : 'No hay resultados'}</div>
-    </div>`;
+  // Filtro tab
+  ventasCredito = ventasCredito.filter(v => {
+    const s = calcSaldoVenta(v.id, v.total).saldoActual;
+    if (_carteraTab === 'pendientes') return s > 0;
+    if (_carteraTab === 'aldía')      return s === 0;
+    return true;
+  });
+
+  if (!ventasCredito.length) {
+    listEl.innerHTML = '<div class="empty-state"><div class="empty-icon">' +
+      (_carteraTab === 'aldía' ? '✅' : '💳') + '</div><div class="empty-title">' +
+      (_carteraTab === 'aldía' ? 'Sin clientes al día' : 'Sin cartera pendiente') +
+      '</div><div class="empty-desc">' +
+      (busqueda ? 'Sin resultados para "' + busqueda + '"' :
+       _carteraTab === 'pendientes' ? 'Todos los créditos están al día' : 'Sin registros') +
+      '</div></div>';
     return;
   }
 
-  listEl.innerHTML = clientes.map(c => {
-    const alDia = c.totalDeuda === 0;
-    const fechaFmt = parseFecha(c.ultimaFecha).toLocaleDateString('es', {day:'2-digit',month:'short',year:'numeric'});
-    return `<div class="cartera-client-card ${alDia ? 'al-dia' : ''}" onclick="openCarteraCliente('${c.clientId}')">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div>
-          <div class="cartera-client-name">${c.nombre}</div>
-          <div class="cartera-client-meta">${c.ventasPendientes} venta${c.ventasPendientes!==1?'s':''} pendiente${c.ventasPendientes!==1?'s':''} · Última: ${fechaFmt}</div>
-        </div>
-        <div style="text-align:right">
-          <div class="cartera-client-saldo ${alDia ? 'al-dia' : ''}">${alDia ? '✅ Al día' : '$' + fmt(c.totalDeuda)}</div>
-          ${!alDia ? `<div style="font-size:0.7rem;color:var(--ink-muted)">${c.ventasPendientes} crédito${c.ventasPendientes!==1?'s':''}</div>` : ''}
-        </div>
-      </div>
-    </div>`;
+  // Agrupar por ruta
+  const gruposMap = {};
+  ventasCredito.forEach(v => {
+    const rc   = (DB.rutaClientes || []).find(r => r.clientId === v.clientId);
+    const ruta = rc ? (DB.rutas || []).find(r => r.id === rc.rutaId) : null;
+    const key  = ruta ? ruta.id : '__sin__';
+    const nom  = ruta ? ruta.nombre : 'Sin ruta asignada';
+    if (!gruposMap[key]) gruposMap[key] = { rutaId: key, rutaNombre: nom, ventas: [] };
+    gruposMap[key].ventas.push(v);
+  });
+
+  let grupos = Object.values(gruposMap);
+  if (rutaFiltro) grupos = grupos.filter(g => g.rutaId === rutaFiltro);
+  grupos.sort((a, b) => {
+    const dA = a.ventas.reduce((s, v) => s + calcSaldoVenta(v.id, v.total).saldoActual, 0);
+    const dB = b.ventas.reduce((s, v) => s + calcSaldoVenta(v.id, v.total).saldoActual, 0);
+    return dB - dA;
+  });
+
+  const puedeAbonar = puedeHacer('ventas:realizar') || esAdminOSup();
+
+  listEl.innerHTML = grupos.map(g => {
+    const deudaRuta  = g.ventas.reduce((s, v) => s + calcSaldoVenta(v.id, v.total).saldoActual, 0);
+    const nClientes  = new Set(g.ventas.map(v => v.clientId)).size;
+    const nPend      = g.ventas.filter(v => calcSaldoVenta(v.id, v.total).saldoActual > 0).length;
+
+    const ventasOrdenadas = [...g.ventas].sort((a, b) => {
+      const sA = calcSaldoVenta(a.id, a.total).saldoActual;
+      const sB = calcSaldoVenta(b.id, b.total).saldoActual;
+      return (sB > 0 ? 1 : 0) - (sA > 0 ? 1 : 0) || b.fecha.localeCompare(a.fecha);
+    });
+
+    const docRows = ventasOrdenadas.map(v => {
+      const { saldoActual } = calcSaldoVenta(v.id, v.total);
+      const pagada  = saldoActual === 0;
+      const checked = _carteraSeleccion.has(v.id);
+      const fechaFmt = parseFecha(v.fecha).toLocaleDateString('es', {day:'2-digit',month:'short',year:'numeric'});
+      return '<div class="cartera-doc-row' + (checked ? ' sel' : '') + '" onclick="carteraToggleDoc(this.dataset.vid,event)" data-vid="' + v.id + '">' +
+        (puedeAbonar && !pagada
+          ? '<input type="checkbox" class="cartera-doc-check"' + (checked ? ' checked' : '') +
+            ' onclick="event.stopPropagation();carteraToggleDoc(this.dataset.vid,event)" data-vid="' + v.id + '">'
+          : '<div style="width:18px"></div>') +
+        '<div class="cartera-doc-info">' +
+          '<div class="cartera-doc-cliente">' + v.clientNombre + '</div>' +
+          '<div class="cartera-doc-id">📋 ' + v.id + (v.numFactura ? ' · <span style="color:#1a3a8f;font-weight:700">' + v.numFactura + '</span>' : '') + '</div>' +
+          '<div class="cartera-doc-fecha">📅 ' + fechaFmt + '</div>' +
+        '</div>' +
+        '<div style="text-align:right">' +
+          '<div class="cartera-doc-saldo"' + (pagada ? ' style="color:#27ae60;font-size:0.8rem"' : '') + '>' +
+            (pagada ? '✅ Al día' : '$' + fmt(saldoActual)) +
+          '</div>' +
+          (!pagada && puedeAbonar
+            ? '<button onclick="event.stopPropagation();abrirModalAbono(this.dataset.vid)" data-vid="' + v.id + '" ' +
+              'style="margin-top:4px;padding:4px 10px;border:1.5px solid #c0392b;background:none;' +
+              'border-radius:6px;color:#c0392b;font-size:0.7rem;font-weight:700;cursor:pointer">💰 Abonar</button>'
+            : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    const selGrupo = g.ventas.filter(v => _carteraSeleccion.has(v.id));
+    const footer = puedeAbonar && selGrupo.length > 0
+      ? '<div class="cartera-ruta-footer">' +
+          '<span style="font-size:0.78rem;color:var(--ink-muted);flex:1">' + selGrupo.length + ' doc. seleccionado(s)</span>' +
+          '<button onclick="carteraAbonoMasivo()" style="padding:7px 16px;background:#c0392b;color:white;border:none;border-radius:8px;font-size:0.8rem;font-weight:700;cursor:pointer">💰 Abonar seleccionados</button>' +
+          '<button onclick="_carteraSeleccion.clear();renderCarteraClientes()" style="padding:7px 12px;background:#f0f0f0;color:var(--ink);border:none;border-radius:8px;font-size:0.78rem;cursor:pointer">✕</button>' +
+        '</div>'
+      : '';
+
+    const grupoId = 'cg-' + g.rutaId;
+    return '<div class="cartera-ruta-group">' +
+      '<div class="cartera-ruta-header" onclick="carteraToggleGrupo(this.dataset.gid)" data-gid="' + grupoId + '">' +
+        '<div>' +
+          '<div class="cartera-ruta-name">🗺 ' + g.rutaNombre + '</div>' +
+          '<div class="cartera-ruta-meta">' + nClientes + ' cliente' + (nClientes!==1?'s':'') + ' · ' + nPend + ' pendiente' + (nPend!==1?'s':'') + '</div>' +
+        '</div>' +
+        '<div style="text-align:right">' +
+          (deudaRuta > 0
+            ? '<div class="cartera-ruta-deuda">$' + fmt(deudaRuta) + '</div>'
+            : '<div style="color:#a8e6cf;font-size:0.82rem">✅ Al día</div>') +
+          '<div style="font-size:0.7rem;color:rgba(255,255,255,0.45);margin-top:2px" id="arr-' + grupoId + '">▼</div>' +
+        '</div>' +
+      '</div>' +
+      '<div id="' + grupoId + '">' + docRows + footer + '</div>' +
+    '</div>';
   }).join('');
+}
+
+function carteraToggleGrupo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : '';
+  const arr = document.getElementById('arr-' + id);
+  if (arr) arr.textContent = open ? '▶' : '▼';
+}
+
+function carteraToggleDoc(ventaId, e) {
+  if (e && e.target && e.target.tagName === 'BUTTON') return;
+  const venta = DB.sales.find(s => s.id === ventaId);
+  if (!venta) return;
+  const { saldoActual } = calcSaldoVenta(ventaId, venta.total);
+  if (saldoActual === 0) { openCarteraCliente(venta.clientId); return; }
+  if (_carteraSeleccion.has(ventaId)) _carteraSeleccion.delete(ventaId);
+  else _carteraSeleccion.add(ventaId);
+  renderCarteraClientes();
+}
+
+function carteraAbonoMasivo() {
+  const ids    = [..._carteraSeleccion];
+  const ventas = ids.map(id => DB.sales.find(s => s.id === id)).filter(Boolean);
+  if (!ventas.length) return;
+  if (ventas.length === 1) { _carteraSeleccion.clear(); abrirModalAbono(ventas[0].id); return; }
+  const total = ventas.reduce((s, v) => s + calcSaldoVenta(v.id, v.total).saldoActual, 0);
+  const lista = ventas.map(v => {
+    const { saldoActual } = calcSaldoVenta(v.id, v.total);
+    return (v.numFactura || v.id) + ' · ' + v.clientNombre + ': $' + fmt(saldoActual);
+  }).join('\n');
+  if (confirm('💰 Abonar en ' + ventas.length + ' documentos:\n\n' + lista + '\n\nTotal: $' + fmt(total) + '\n\n¿Continuar uno por uno?')) {
+    _carteraSeleccion.clear();
+    abrirModalAbono(ventas[0].id);
+  }
 }
 
 // ── Abrir detalle de cartera de un cliente ──
@@ -5290,13 +6152,23 @@ async function syncFromSheets(showFeedback = false) {
           if (r.manejaInventario === undefined && local && local.manejaInventario !== undefined) {
             r.manejaInventario = local.manejaInventario;
           }
-          // Normalizar: asegurar que sea booleano (Sheets puede devolver string 'false'/'FALSE')
           if (typeof r.manejaInventario === 'string') {
             const v = r.manejaInventario.trim().toUpperCase();
             r.manejaInventario = (v === 'TRUE' || v === 'SI' || v === 'SÍ' || v === '1');
           }
           if (r.manejaInventario === undefined || r.manejaInventario === null) {
-            r.manejaInventario = true; // default
+            r.manejaInventario = true;
+          }
+          // manejaCartera — mismo patrón
+          if (r.manejaCartera === undefined && local && local.manejaCartera !== undefined) {
+            r.manejaCartera = local.manejaCartera;
+          }
+          if (typeof r.manejaCartera === 'string') {
+            const v2 = r.manejaCartera.trim().toUpperCase();
+            r.manejaCartera = (v2 === 'TRUE' || v2 === 'SI' || v2 === 'SÍ' || v2 === '1');
+          }
+          if (r.manejaCartera === undefined || r.manejaCartera === null) {
+            r.manejaCartera = true; // default: sí maneja cartera
           }
           // manejaCartera — mismo patrón
           if (r.manejaCartera === undefined && local && local.manejaCartera !== undefined) {
@@ -5440,6 +6312,9 @@ function renderRutasList(filter = '') {
           ${r.manejaCartera !== false
             ? '<span class="badge" style="background:#e3f2fd;color:#0d47a1;margin-left:4px">💳 Con cartera</span>'
             : '<span class="badge" style="background:#fce4ec;color:#b71c1c;margin-left:4px">🚫 Sin cartera</span>'}
+          ${r.manejaCartera !== false
+            ? '<span class="badge" style="background:#e3f2fd;color:#0d47a1;margin-left:4px">💳 Con cartera</span>'
+            : '<span class="badge" style="background:#fce4ec;color:#b71c1c;margin-left:4px">🚫 Sin cartera</span>'}
         </div>
       </div>
       <div class="mgmt-item-actions">
@@ -5486,6 +6361,28 @@ function _setRutaInvRadio(val) {
   const id = val ? 'ruta-inv-si' : 'ruta-inv-no';
   const el = document.getElementById(id);
   if (el) { el.checked = true; onRutaInvChange(); }
+}
+
+function onRutaCartChange() {
+  const val    = document.querySelector('input[name="ruta-cart"]:checked')?.value;
+  const nota   = document.getElementById('ruta-cart-nota');
+  const lblSi  = document.getElementById('lbl-cart-si');
+  const lblNo  = document.getElementById('lbl-cart-no');
+  if (val === 'si') {
+    lblSi.style.borderColor = 'var(--primary)'; lblSi.style.background = '#f0faf5';
+    lblNo.style.borderColor = 'var(--border)';  lblNo.style.background = '';
+    nota.style.display = 'none';
+  } else if (val === 'no') {
+    lblNo.style.borderColor = '#c0392b'; lblNo.style.background = '#fff5f5';
+    lblSi.style.borderColor = 'var(--border)'; lblSi.style.background = '';
+    nota.style.display = 'block';
+  }
+}
+
+function _setRutaCartRadio(val) {
+  const id = val ? 'ruta-cart-si' : 'ruta-cart-no';
+  const el = document.getElementById(id);
+  if (el) { el.checked = true; onRutaCartChange(); }
 }
 
 function onRutaCartChange() {
