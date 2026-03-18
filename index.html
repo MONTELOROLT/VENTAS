@@ -749,6 +749,12 @@
   .cartera-doc-fecha { font-size:0.7rem;color:var(--ink-muted); }
   .cartera-doc-saldo { font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;color:#c0392b;text-align:right;flex-shrink:0; }
   .cartera-ruta-footer { padding:10px 14px;background:#f8f9fa;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center; }
+  /* ── ANULADAS ── */
+  .badge-anulada { background:#6c757d;color:white;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:4px; }
+  .sale-card.anulada { opacity:0.6;border-left:4px solid #6c757d; }
+  .sale-card.anulada .sale-total { text-decoration:line-through;color:#6c757d; }
+  .btn-edit-sale { flex:1;padding:8px;border:2px solid #1a3a8f;background:none;border-radius:8px;color:#1a3a8f;font-size:0.8rem;font-weight:700;cursor:pointer; }
+  .btn-anular-sale { flex:1;padding:8px;border:2px solid #c0392b;background:none;border-radius:8px;color:#c0392b;font-size:0.8rem;font-weight:700;cursor:pointer; }
   /* ── INFORMES ── */
   .inf-hero { background:linear-gradient(135deg,#1a3a8f,#0f3460);border-radius:var(--radius);padding:18px;color:white;margin-bottom:18px; }
   .inf-hero-title { font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:4px; }
@@ -882,7 +888,7 @@
           <button class="logout-btn" onclick="resetAppData()" style="background:rgba(255,100,50,0.25);margin-right:4px" title="Limpiar datos locales">🗑️</button>
           <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
             <button class="logout-btn" onclick="doLogout()">Salir</button>
-            <span style="font-size:0.5rem;color:rgba(255,255,255,0.4);letter-spacing:0.03em;font-weight:500;user-select:none">V-1.2.260316</span>
+            <span style="font-size:0.5rem;color:rgba(255,255,255,0.4);letter-spacing:0.03em;font-weight:500;user-select:none">V-1.2.260318</span>
           </div>
         </div>
       </div>
@@ -1648,13 +1654,35 @@
         <button onclick="guardarFacturaElec()" style="padding:8px 14px;background:#1a3a8f;color:white;border:none;border-radius:8px;font-weight:700;font-size:0.82rem;cursor:pointer;white-space:nowrap">Guardar</button>
       </div>
     </div>
-    <div style="display:flex;gap:10px;margin-top:14px">
-      <button class="btn-primary" id="btn-modal-pdf" onclick="generatePDFFromModal()">📄 PDF</button>
-      <button class="btn-secondary" id="btn-modal-share" onclick="shareFromModal()" style="margin:0">📤 Compartir</button>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn-primary" id="btn-modal-pdf" onclick="generatePDFFromModal()" style="flex:1">📄 PDF</button>
+      <button class="btn-secondary" id="btn-modal-share" onclick="shareFromModal()" style="margin:0;flex:1">📤 Compartir</button>
+    </div>
+    <div id="sale-detail-acciones" style="display:none;margin-top:10px;display:flex;gap:8px">
+      <button class="btn-edit-sale" id="btn-detail-edit" onclick="abrirEditarVentaDesdeModal()">✏️ Editar venta</button>
+      <button class="btn-anular-sale" id="btn-detail-anular" onclick="confirmarAnularVentaDesdeModal()">🚫 Anular venta</button>
     </div>
   </div>
 </div>
 
+
+<!-- MODAL EDITAR VENTA -->
+<div class="modal-overlay hidden" id="modal-editar-venta">
+  <div class="modal-sheet" style="max-height:92vh;overflow-y:auto">
+    <div class="modal-title">✏️ Editar Venta</div>
+    <button class="modal-close" onclick="closeModal('modal-editar-venta')">✕</button>
+    <input type="hidden" id="editar-venta-id">
+    <div id="editar-venta-cliente" style="background:#f0faf5;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.85rem;font-weight:600;color:var(--green-dark)"></div>
+    <div id="editar-venta-items"></div>
+    <div style="margin-top:14px;padding:12px;background:#f8f9fa;border-radius:10px">
+      <div style="display:flex;justify-content:space-between;font-size:0.85rem;font-weight:700;color:var(--ink)">
+        <span>Nuevo total:</span>
+        <span id="editar-venta-total" style="color:var(--primary)">$0</span>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="guardarEdicionVenta()" style="width:100%;margin-top:16px">💾 Guardar cambios</button>
+  </div>
+</div>
 
 <!-- MODAL ABONO -->
 <div class="modal-overlay hidden" id="modal-abono">
@@ -1673,6 +1701,25 @@
       <input class="form-input" type="text" id="abono-nota" placeholder="Ej: Pago efectivo, transferencia...">
     </div>
     <button class="btn-primary" onclick="guardarAbono()" style="background:#c0392b">✅ Registrar Abono</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR ABONO -->
+<div class="modal-overlay hidden" id="modal-editar-abono">
+  <div class="modal-sheet">
+    <div class="modal-title">✏️ Editar Abono</div>
+    <button class="modal-close" onclick="closeModal('modal-editar-abono')">✕</button>
+    <input type="hidden" id="editar-abono-id">
+    <div id="editar-abono-info" style="background:#fff5f5;border-radius:10px;padding:12px;margin-bottom:14px;font-size:0.82rem"></div>
+    <div class="form-group">
+      <label class="form-label">Nuevo valor del abono *</label>
+      <input class="form-input" type="number" id="editar-abono-valor" placeholder="$0" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nota</label>
+      <input class="form-input" type="text" id="editar-abono-nota" placeholder="Referencia, observación...">
+    </div>
+    <button class="btn-primary" onclick="guardarEdicionAbono()" style="width:100%">💾 Guardar cambios</button>
   </div>
 </div>
 
@@ -4704,15 +4751,23 @@ function openCarteraCliente(clientId) {
     const abonosVentaHTML = abonosVenta.length ? `
       <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)">
         <div style="font-size:0.7rem;font-weight:600;color:var(--ink-muted);margin-bottom:6px">ABONOS REGISTRADOS</div>
-        ${abonosVenta.map(a => `
-          <div class="abono-row">
+        ${abonosVenta.map(a => {
+          const aAnulado = a.anulado === true || parseFloat(a.monto) === 0 && a.anulado;
+          const accionesAbono = esAdminOSup() ? `
+            <div style="display:flex;gap:6px;margin-top:4px">
+              ${!aAnulado ? `<button onclick="event.stopPropagation();abrirEditarAbono('${a.id}')" style="padding:3px 8px;border:1.5px solid #1a3a8f;background:none;border-radius:6px;color:#1a3a8f;font-size:0.68rem;font-weight:700;cursor:pointer">✏️ Editar</button>` : ''}
+              ${!aAnulado ? `<button onclick="event.stopPropagation();confirmarAnularAbono('${a.id}')" style="padding:3px 8px;border:1.5px solid #c0392b;background:none;border-radius:6px;color:#c0392b;font-size:0.68rem;font-weight:700;cursor:pointer">🚫 Anular</button>` : ''}
+            </div>` : '';
+          return `<div class="abono-row" style="${aAnulado ? 'opacity:0.5;text-decoration:line-through' : ''}">
             <div>
-              <div class="abono-row-fecha">${parseFecha(a.fecha).toLocaleString('es', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+              <div class="abono-row-fecha">${parseFecha(a.fecha).toLocaleString('es', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}${aAnulado ? ' <span style="background:#6c757d;color:white;font-size:0.6rem;padding:1px 5px;border-radius:4px;text-decoration:none">ANULADO</span>' : ''}</div>
               <div class="abono-row-quien">Por: ${a.vendedorNombre || '—'}</div>
               ${a.nota ? `<div class="abono-row-nota">${a.nota}</div>` : ''}
+              ${accionesAbono}
             </div>
             <div class="abono-row-monto">+$${fmt(a.monto)}</div>
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>` : '';
 
     return `<div class="cartera-venta-row" style="${pagada ? 'opacity:0.65' : ''}">
@@ -4859,14 +4914,26 @@ function guardarAbono() {
 // ═══════════════════════════════════════════════
 function saleCardHTML(s) {
   const fecha = parseFecha(s.fecha);
-  const tipoBadge = s.esCambio
-    ? `<span style="background:#fef9e7;color:#d68910;font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:4px">🔄 CAMBIO</span>`
-    : s.tipoPago === 'CREDITO'
-      ? `<span style="background:#fdecea;color:#c0392b;font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:4px">📋 CRÉDITO</span>`
-      : `<span style="background:#eafaf1;color:#27ae60;font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:4px">💵 CONTADO</span>`;
-  const saldoBadge = s.tipoPago === 'CREDITO' && s.saldoPorPagar > 0
+  const anulada = s.anulada === true;
+  const tipoBadge = anulada
+    ? `<span class="badge-anulada">🚫 ANULADA</span>`
+    : s.esCambio
+      ? `<span style="background:#fef9e7;color:#d68910;font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:4px">🔄 CAMBIO</span>`
+      : s.tipoPago === 'CREDITO'
+        ? `<span style="background:#fdecea;color:#c0392b;font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:4px">📋 CRÉDITO</span>`
+        : `<span style="background:#eafaf1;color:#27ae60;font-size:0.65rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:4px">💵 CONTADO</span>`;
+  const saldoBadge = !anulada && s.tipoPago === 'CREDITO' && s.saldoPorPagar > 0
     ? `<div style="font-size:0.7rem;color:#c0392b;font-weight:600">Saldo: $${fmt(s.saldoPorPagar)}</div>` : '';
-  return `<div class="sale-card" onclick="openSaleDetail('${s.id}')">
+
+  const botonesAccion = esAdminOSup() ? `
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="sale-pdf-btn" style="flex:1" onclick="event.stopPropagation();generatePDF(DB.sales.find(s=>s.id==='${s.id}'))">📄 PDF</button>
+      ${!anulada ? `<button class="btn-edit-sale" onclick="event.stopPropagation();abrirEditarVenta('${s.id}')">✏️ Editar</button>` : ''}
+      ${!anulada ? `<button class="btn-anular-sale" onclick="event.stopPropagation();confirmarAnularVenta('${s.id}')">🚫 Anular</button>` : ''}
+    </div>` :
+    `<button class="sale-pdf-btn" onclick="event.stopPropagation();generatePDF(DB.sales.find(s=>s.id==='${s.id}'))">📄 Descargar PDF</button>`;
+
+  return `<div class="sale-card ${anulada ? 'anulada' : ''}" onclick="openSaleDetail('${s.id}')">
     <div class="sale-card-top">
       <div>
         <div class="sale-client">${s.clientNombre} ${tipoBadge}</div>
@@ -4879,7 +4946,7 @@ function saleCardHTML(s) {
         <div style="font-size:0.7rem;color:var(--ink-muted);font-weight:600">${s.numFactura ? `${s.id} · <span style="color:#1a3a8f">${s.numFactura}</span>` : s.id}</div>
       </div>
     </div>
-    <button class="sale-pdf-btn" onclick="event.stopPropagation(); generatePDF(DB.sales.find(s=>s.id==='${s.id}'))">📄 Descargar PDF</button>
+    ${botonesAccion}
   </div>`;
 }
 
@@ -5204,6 +5271,18 @@ function openSaleDetail(saleId) {
     }
   } else {
     secFact.style.display = 'none';
+  }
+
+  // Mostrar botones editar/anular solo para admin/supervisor y si no está anulada
+  const accionesDiv = document.getElementById('sale-detail-acciones');
+  const btnEdit     = document.getElementById('btn-detail-edit');
+  const btnAnular   = document.getElementById('btn-detail-anular');
+  if (accionesDiv && esAdminOSup()) {
+    accionesDiv.style.display = sale.anulada ? 'none' : 'flex';
+    if (btnEdit)   btnEdit.style.display   = sale.anulada ? 'none' : '';
+    if (btnAnular) btnAnular.style.display = sale.anulada ? 'none' : '';
+  } else if (accionesDiv) {
+    accionesDiv.style.display = 'none';
   }
 
   openModal('modal-sale-detail');
@@ -6888,6 +6967,239 @@ function getRutaIdDeVendedor(vendedorId) {
 // Calcula saldo de inventario por RUTA (no por vendedor)
 // Al cambiar el vendedor de una ruta, el saldo histórico se mantiene en la ruta
 // Calcula saldo de inventario de una ruta hasta una fecha de corte
+// ═══════════════════════════════════════════════════════════════
+// EDITAR Y ANULAR VENTAS
+// ═══════════════════════════════════════════════════════════════
+let _editVentaRef = null;
+
+function abrirEditarVenta(saleId) {
+  const sale = DB.sales.find(s => s.id === saleId);
+  if (!sale) return;
+  _editVentaRef = sale;
+  document.getElementById('editar-venta-id').value = saleId;
+  document.getElementById('editar-venta-cliente').textContent = '👤 ' + sale.clientNombre + ' · ' + (sale.numFactura || sale.id);
+  renderEditarVentaItems(sale.items);
+  closeModal('modal-sale-detail');
+  openModal('modal-editar-venta');
+}
+
+function abrirEditarVentaDesdeModal() {
+  if (_modalSaleRef) abrirEditarVenta(_modalSaleRef.id);
+}
+
+function renderEditarVentaItems(items) {
+  const el = document.getElementById('editar-venta-items');
+  el.innerHTML = items.map((item, idx) => `
+    <div style="background:#f8f9fa;border-radius:10px;padding:12px;margin-bottom:10px">
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:8px">${item.nombre} <span style="font-size:0.72rem;color:var(--ink-muted)">${item.unidad || ''}</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div>
+          <div style="font-size:0.7rem;color:var(--ink-muted);margin-bottom:3px">Cantidad</div>
+          <input type="number" min="0" value="${item.qty}" id="ev-qty-${idx}"
+            oninput="recalcEditTotal()"
+            style="width:100%;padding:7px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:0.9rem;box-sizing:border-box">
+        </div>
+        <div>
+          <div style="font-size:0.7rem;color:var(--ink-muted);margin-bottom:3px">Precio</div>
+          <input type="number" min="0" value="${item.price || item.precio || 0}" id="ev-price-${idx}"
+            oninput="recalcEditTotal()"
+            style="width:100%;padding:7px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:0.9rem;box-sizing:border-box">
+        </div>
+        <div>
+          <div style="font-size:0.7rem;color:var(--ink-muted);margin-bottom:3px">Desc %</div>
+          <input type="number" min="0" max="100" value="${item.descPct || 0}" id="ev-desc-${idx}"
+            oninput="recalcEditTotal()"
+            style="width:100%;padding:7px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:0.9rem;box-sizing:border-box">
+        </div>
+      </div>
+    </div>`).join('');
+  recalcEditTotal();
+}
+
+function recalcEditTotal() {
+  if (!_editVentaRef) return;
+  let total = 0;
+  (_editVentaRef.items || []).forEach((item, idx) => {
+    const qty   = parseFloat(document.getElementById('ev-qty-'   + idx)?.value) || 0;
+    const price = parseFloat(document.getElementById('ev-price-' + idx)?.value) || 0;
+    const desc  = parseFloat(document.getElementById('ev-desc-'  + idx)?.value) || 0;
+    total += qty * price * (1 - desc / 100);
+  });
+  const el = document.getElementById('editar-venta-total');
+  if (el) el.textContent = '$' + fmt(total);
+}
+
+function guardarEdicionVenta() {
+  if (!_editVentaRef) return;
+  const saleId = _editVentaRef.id;
+  const idx    = DB.sales.findIndex(s => s.id === saleId);
+  if (idx < 0) return;
+
+  const sale = DB.sales[idx];
+  let nuevoTotal = 0;
+  const nuevosItems = (sale.items || []).map((item, i) => {
+    const qty   = parseFloat(document.getElementById('ev-qty-'   + i)?.value) || 0;
+    const price = parseFloat(document.getElementById('ev-price-' + i)?.value) || (item.price || 0);
+    const desc  = parseFloat(document.getElementById('ev-desc-'  + i)?.value) || 0;
+    const neto  = qty * price * (1 - desc / 100);
+    nuevoTotal += neto;
+    return { ...item, qty, price, descPct: desc };
+  });
+
+  // Recalcular saldo por pagar
+  const abonoInicial = parseFloat(sale.abonoInicial || sale.abono || 0);
+  const sumaAbonos   = (DB.abonos || []).filter(a => a.ventaId === saleId && !a.anulado)
+                         .reduce((s, a) => s + parseFloat(a.monto || 0), 0);
+  const nuevoSaldo   = Math.max(0, nuevoTotal - abonoInicial - sumaAbonos);
+
+  DB.sales[idx] = {
+    ...sale,
+    items:         nuevosItems,
+    total:         parseFloat(nuevoTotal.toFixed(2)),
+    subtotal:      parseFloat(nuevoTotal.toFixed(2)),
+    saldoPorPagar: parseFloat(nuevoSaldo.toFixed(2)),
+    editadoPor:    currentUser ? currentUser.nombre : '',
+    fechaEdicion:  new Date().toISOString()
+  };
+
+  saveDB();
+  syncRecord('Sale', DB.sales[idx]);
+  closeModal('modal-editar-venta');
+  renderSalesList();
+  showToast('✅ Venta actualizada correctamente');
+}
+
+function confirmarAnularVenta(saleId) {
+  const sale = DB.sales.find(s => s.id === saleId);
+  if (!sale) return;
+  if (!confirm('Anular la venta ' + (sale.numFactura || saleId) + ' de ' + sale.clientNombre + '? Esta accion pondra en CERO todas las cantidades. Los abonos deben anularse por separado.')) return;
+  anularVenta(saleId);
+}
+
+function confirmarAnularVentaDesdeModal() {
+  if (_modalSaleRef) {
+    closeModal('modal-sale-detail');
+    confirmarAnularVenta(_modalSaleRef.id);
+  }
+}
+
+function anularVenta(saleId) {
+  const idx = DB.sales.findIndex(s => s.id === saleId);
+  if (idx < 0) return;
+  const sale = DB.sales[idx];
+
+  DB.sales[idx] = {
+    ...sale,
+    anulada:       true,
+    items:         (sale.items || []).map(i => ({ ...i, qty: 0, descPct: 0 })),
+    total:         0,
+    subtotal:      0,
+    descuentoValor: 0,
+    saldoPorPagar: 0,
+    anuladoPor:    currentUser ? currentUser.nombre : '',
+    fechaAnulacion: new Date().toISOString()
+  };
+
+  saveDB();
+  syncRecord('Sale', DB.sales[idx]);
+  renderSalesList();
+  renderCarteraClientes();
+  showToast('🚫 Venta anulada — ' + (sale.numFactura || saleId));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EDITAR Y ANULAR ABONOS
+// ═══════════════════════════════════════════════════════════════
+function abrirEditarAbono(abonoId) {
+  const abono = (DB.abonos || []).find(a => a.id === abonoId);
+  if (!abono) return;
+  const venta = DB.sales.find(s => s.id === abono.ventaId) || {};
+
+  document.getElementById('editar-abono-id').value = abonoId;
+  document.getElementById('editar-abono-valor').value = abono.monto || 0;
+  document.getElementById('editar-abono-nota').value  = abono.nota || '';
+  document.getElementById('editar-abono-info').innerHTML =
+    '<strong>' + (venta.clientNombre || abono.clientId) + '</strong><br>' +
+    'Venta: ' + (venta.numFactura || abono.ventaId) + ' · ' +
+    'Abono actual: <strong>$' + fmt(abono.monto) + '</strong>';
+
+  openModal('modal-editar-abono');
+}
+
+function guardarEdicionAbono() {
+  const abonoId  = document.getElementById('editar-abono-id').value;
+  const nuevoMonto = parseFloat(document.getElementById('editar-abono-valor').value) || 0;
+  const nuevaNota  = document.getElementById('editar-abono-nota').value.trim();
+
+  if (nuevoMonto < 0) { showToast('⚠️ El valor no puede ser negativo'); return; }
+
+  const idx = (DB.abonos || []).findIndex(a => a.id === abonoId);
+  if (idx < 0) return;
+
+  DB.abonos[idx] = {
+    ...DB.abonos[idx],
+    monto:        nuevoMonto,
+    nota:         nuevaNota,
+    editadoPor:   currentUser ? currentUser.nombre : '',
+    fechaEdicion: new Date().toISOString()
+  };
+
+  // Recalcular saldo en la venta
+  const ventaId  = DB.abonos[idx].ventaId;
+  const ventaIdx = DB.sales.findIndex(s => s.id === ventaId);
+  if (ventaIdx >= 0) {
+    const venta = DB.sales[ventaIdx];
+    const { saldoActual } = calcSaldoVenta(ventaId, venta.total);
+    DB.sales[ventaIdx].saldoPorPagar = parseFloat(saldoActual.toFixed(2));
+    syncRecord('Sale', DB.sales[ventaIdx]);
+  }
+
+  saveDB();
+  syncRecord('abono', DB.abonos[idx]);
+  closeModal('modal-editar-abono');
+  closeModal('modal-cartera-cliente');
+  renderCarteraClientes();
+  showToast('✅ Abono actualizado correctamente');
+}
+
+function confirmarAnularAbono(abonoId) {
+  const abono = (DB.abonos || []).find(a => a.id === abonoId);
+  if (!abono) return;
+  if (!confirm('\uD83D\uDEAB \u00BFAnular este abono de $' + fmt(abono.monto) + '?\\nEl monto quedara en CERO y aparecera como ANULADO.')) return;
+  if (!confirm('Anular este abono de $' + fmt(abono.monto) + '? El monto quedara en CERO y aparecera como ANULADO.')) return;
+}
+
+function anularAbono(abonoId) {
+  const idx = (DB.abonos || []).findIndex(a => a.id === abonoId);
+  if (idx < 0) return;
+
+  const montoAnterior = DB.abonos[idx].monto;
+  DB.abonos[idx] = {
+    ...DB.abonos[idx],
+    monto:          0,
+    anulado:        true,
+    nota:           (DB.abonos[idx].nota ? DB.abonos[idx].nota + ' | ' : '') + 'ANULADO',
+    anuladoPor:     currentUser ? currentUser.nombre : '',
+    fechaAnulacion: new Date().toISOString()
+  };
+
+  // Recalcular saldo en la venta
+  const ventaId  = DB.abonos[idx].ventaId;
+  const ventaIdx = DB.sales.findIndex(s => s.id === ventaId);
+  if (ventaIdx >= 0) {
+    const venta = DB.sales[ventaIdx];
+    const { saldoActual } = calcSaldoVenta(ventaId, venta.total);
+    DB.sales[ventaIdx].saldoPorPagar = parseFloat(saldoActual.toFixed(2));
+    syncRecord('Sale', DB.sales[ventaIdx]);
+  }
+
+  saveDB();
+  syncRecord('abono', DB.abonos[idx]);
+  closeModal('modal-cartera-cliente');
+  renderCarteraClientes();
+  showToast('🚫 Abono de $' + fmt(montoAnterior) + ' anulado');
+}
+
 function calcSaldoHasta(vendedorId, fechaCorte) {
   const rutaId = getRutaIdDeVendedor(vendedorId);
   const movs = getInvMovimientos().filter(m => {
