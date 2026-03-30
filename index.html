@@ -1655,8 +1655,20 @@
     </div>
     <div class="form-group">
       <label class="form-label">Ciudad *</label>
-      <div class="select-wrap">
-        <select class="form-select" id="client-ciudad"></select>
+      <div style="position:relative">
+        <input class="form-input" type="text" id="client-ciudad-input"
+          placeholder="Buscar o escribir ciudad..."
+          autocomplete="off"
+          oninput="onCiudadInput(this.value)"
+          onblur="onCiudadBlur()"
+          style="text-transform:uppercase">
+        <input type="hidden" id="client-ciudad">
+        <div id="client-ciudad-dropdown"
+          style="display:none;position:absolute;left:0;right:0;top:100%;z-index:500;
+                 background:white;border:2px solid var(--green-mid);border-top:none;
+                 border-radius:0 0 var(--radius-sm) var(--radius-sm);
+                 max-height:200px;overflow-y:auto;box-shadow:var(--shadow)">
+        </div>
       </div>
     </div>
     <div class="form-group">
@@ -1962,12 +1974,10 @@
       <input class="form-input" type="text" id="ruta-nombre" placeholder="Ej: Ruta Norte, Ruta Tuluá...">
     </div>
     <div class="form-group">
-      <label class="form-label">Vendedor asignado</label>
-      <div class="select-wrap">
-        <select class="form-select" id="ruta-vendedor">
-          <option value="">— Sin asignar —</option>
-        </select>
-      </div>
+      <label class="form-label">Vendedores asignados <span style="font-size:0.75rem;color:var(--ink-muted);font-weight:400">(puedes seleccionar varios)</span></label>
+      <select class="form-select" id="ruta-vendedor" multiple style="height:auto;min-height:80px;padding:6px 10px">
+      </select>
+      <div style="font-size:0.72rem;color:var(--ink-muted);margin-top:4px">💡 Mantén Ctrl (o Cmd en Mac) para seleccionar múltiples vendedores</div>
     </div>
     <div class="form-group">
       <label class="form-label">¿Esta ruta maneja inventario?</label>
@@ -2057,7 +2067,7 @@
 // ── Service Worker (cache offline) ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'monteloro-v1';
+    const CACHE = 'monteloro-v1.3.260330';
     self.addEventListener('install', e => {
       self.skipWaiting();
     });
@@ -2229,7 +2239,7 @@ function cerrarBannerPWA() {
       <img id="dt-topbar-logo" src="" alt="Monteloro">
       <div>
         <div id="dt-topbar-brand">Monteloro</div>
-        <div id="dt-version" style="font-size:0.58rem;color:rgba(255,255,255,0.35)">V-1.2.260318</div>
+        <div id="dt-version" style="font-size:0.58rem;color:rgba(255,255,255,0.35)">V-1.3.260330</div>
       </div>
     </div>
     <div id="dt-topbar-right">
@@ -2635,10 +2645,15 @@ function startApp() {
     rolBadge.style.background = rolColors[currentUser.rol] || 'rgba(255,255,255,0.18)';
     rolBadge.style.display = 'inline-block';
   }
-  // Mostrar ruta del vendedor en el subtítulo
+  // Mostrar ruta(s) del vendedor en el subtítulo
   if (currentUser && currentUser.rol === 'vendedor') {
-    const miRuta = getMiRuta();
-    document.getElementById('topbar-subtitle') && (document.getElementById('topbar-subtitle').textContent = miRuta ? '🗺️ ' + miRuta.nombre : '');
+    const misRutas = getMisRutas();
+    const subtitleEl = document.getElementById('topbar-subtitle');
+    if (subtitleEl) {
+      subtitleEl.textContent = misRutas.length
+        ? '🗺️ ' + misRutas.map(r => r.nombre).join(' · ')
+        : '';
+    }
   }
 
   // ── Navegación según permisos ──
@@ -2657,17 +2672,15 @@ function startApp() {
   const puedeVerInv = (() => {
     if (!puedeHacer('ver:inventario')) return false;
     if (esAdmin() || esSupervisor()) return true;
-    // Para vendedor: verificar que su ruta tenga manejaInventario !== false
-    const rutaVend = (DB.rutas || []).find(r =>
-      r.vendedorId && r.vendedorId.toString() === currentUser.id.toString()
-    );
+    // Para vendedor: verificar que alguna de sus rutas tenga manejaInventario !== false
+    const rutaVend = getMisRutas().find(r => r.manejaInventario !== false) || getMiRuta();
     return !rutaVend || rutaVend.manejaInventario !== false;
   })();
   navShow('nav-inventario', puedeVerInv);
   // Cartera: admin/supervisor siempre, vendedor solo si su ruta tiene manejaCartera
   let puedeVerCartera = true;
   if (!esAdmin() && !esSupervisor()) {
-    const rutaVendC = (DB.rutas || []).find(r => r.vendedorId && r.vendedorId.toString() === currentUser.id.toString());
+    const rutaVendC = getMisRutas().find(r => r.manejaCartera !== false) || getMiRuta();
     puedeVerCartera = !rutaVendC || rutaVendC.manejaCartera !== false;
   }
   navShow('nav-cartera', puedeVerCartera);
@@ -2768,11 +2781,31 @@ function navigate(target) {
 // ═══════════════════════════════════════════════
 
 // Devuelve la ruta actualmente asignada al vendedor logueado (o null)
+// Helper: verifica si un vendedorId (string o array) contiene al usuario actual
+function rutaTieneVendedor(ruta, userId) {
+  if (!ruta || !userId) return false;
+  const ids = ruta.vendedorIds || (Array.isArray(ruta.vendedorId) ? ruta.vendedorId : [ruta.vendedorId]);
+  return ids.some(id => id && id.toString() === userId.toString());
+}
+
+// Helper: devuelve array de IDs de vendedores de una ruta (siempre array)
+function getVendedorIdsDeRuta(ruta) {
+  if (!ruta) return [];
+  if (ruta.vendedorIds && ruta.vendedorIds.length) return ruta.vendedorIds;
+  if (Array.isArray(ruta.vendedorId)) return ruta.vendedorId;
+  return ruta.vendedorId ? [ruta.vendedorId] : [];
+}
+
+// Devuelve la primera ruta del vendedor (compatibilidad con código que espera una sola)
 function getMiRuta() {
   if (!currentUser) return null;
-  return (DB.rutas || []).find(r =>
-    r.vendedorId && r.vendedorId.toString() === currentUser.id.toString()
-  ) || null;
+  return (DB.rutas || []).find(r => rutaTieneVendedor(r, currentUser.id)) || null;
+}
+
+// Devuelve TODAS las rutas del vendedor logueado
+function getMisRutas() {
+  if (!currentUser) return [];
+  return (DB.rutas || []).filter(r => rutaTieneVendedor(r, currentUser.id));
 }
 
 // Devuelve los clientIds asignados a una ruta
@@ -2781,10 +2814,13 @@ function getClientesDeRuta(rutaId) {
   return (DB.rutaClientes || []).filter(rc => rc.rutaId === rutaId).map(rc => rc.clientId);
 }
 
-// Devuelve los clientIds que el vendedor logueado puede manejar (según su ruta actual)
+// Devuelve los clientIds que el vendedor logueado puede manejar (todas sus rutas)
 function getMisClientes() {
-  const ruta = getMiRuta();
-  return ruta ? getClientesDeRuta(ruta.id) : [];
+  const rutas = getMisRutas();
+  if (!rutas.length) return [];
+  const ids = new Set();
+  rutas.forEach(r => getClientesDeRuta(r.id).forEach(cid => ids.add(cid)));
+  return Array.from(ids);
 }
 
 // ═══════════════════════════════════════════════
@@ -2823,7 +2859,13 @@ function updateHomeStats() {
 
 function renderRecentSales() {
   const el = document.getElementById('recent-sales');
-  const recent = [...DB.sales].reverse().slice(0, 3);
+  let sales = [...DB.sales];
+  // Vendedor solo ve sus propias ventas
+  if (!puedeHacer('ventas:ver:todas')) {
+    const misClientes = getMisClientes();
+    sales = sales.filter(s => misClientes.includes(s.clientId) || s.usuarioId === (currentUser && currentUser.id));
+  }
+  const recent = sales.reverse().slice(0, 3);
   if (!recent.length) {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Sin ventas aún</div><div class="empty-desc">Registra tu primera venta</div></div>`;
     return;
@@ -3154,10 +3196,8 @@ function renderProductPicker() {
   const el = document.getElementById('products-list');
   document.getElementById('product-search-input').value = '';
 
-  // Verificar si la ruta del vendedor maneja inventario
-  const rutaVendedorP = (DB.rutas || []).find(function(r) {
-    return r.vendedorId && r.vendedorId.toString() === ((currentUser && currentUser.id) || '').toString();
-  });
+  // Verificar si alguna ruta del vendedor maneja inventario
+  const rutaVendedorP = getMisRutas().find(function(r) { return r.manejaInventario !== false; }) || getMiRuta();
   const conInventarioP = !rutaVendedorP || rutaVendedorP.manejaInventario !== false;
   const saldoActualP   = conInventarioP ? calcSaldo((currentUser && currentUser.id) || '') : {};
 
@@ -3185,14 +3225,38 @@ function renderProductPicker() {
       const bg    = disp > 0 ? '#d4eddf' : '#fdecea';
       dispBadge = '<div style="font-size:0.68rem;font-weight:700;padding:1px 7px;border-radius:8px;background:' + bg + ';color:' + color + ';margin-top:2px;display:inline-block">' + (disp > 0 ? disp + ' disp.' : 'Sin stock') + '</div>';
     }
+    // Si el precio es 0, el vendedor puede ingresar el precio manualmente
+    const precioBase = parseFloat(item.price) || 0;
+    const precioLibre = precioBase === 0;
+    const inputId = 'precio-libre-' + item.productId;
+    // Recuperar precio ya ingresado si el producto ya está en carrito
+    const cartItem = currentSale.items.find(function(i) { return i.productId === item.productId; });
+    const precioActual = cartItem ? cartItem.price : 0;
+
+    let precioHtml;
+    if (precioLibre) {
+      precioHtml = '<div style="display:flex;align-items:center;gap:4px">' +
+        '<span style="font-size:0.75rem;color:var(--ink-muted)">$</span>' +
+        '<input type="number" min="0" step="0.01" id="' + inputId + '" ' +
+          'value="' + (precioActual > 0 ? precioActual : '') + '" ' +
+          'placeholder="Precio" ' +
+          'style="width:80px;padding:4px 6px;border:2px solid var(--amber);border-radius:8px;font-size:0.85rem;font-family:Arial,sans-serif;outline:none;color:var(--ink)" ' +
+          'onclick="event.stopPropagation()" ' +
+          'oninput="onPrecioLibreChange(\'' + item.productId + '\')">' +
+        '<span style="font-size:0.65rem;color:var(--amber);font-weight:700">Libre</span>' +
+      '</div>';
+    } else {
+      precioHtml = '<div class="product-price">$' + fmt(precioBase) + '</div>';
+    }
+
     return '<div class="product-item ' + (inCart ? 'selected' : '') + '" id="pi-' + item.productId + '">' +
       '<div style="flex:1">' +
         '<div class="product-name">' + prod.nombre + '</div>' +
         '<div class="product-unit">' + prod.unidad + (prod.linea ? ' · ' + prod.linea : '') + '</div>' +
         dispBadge +
       '</div>' +
-      '<div class="product-price">$' + fmt(parseFloat(item.price)) + '</div>' +
-      '<button class="product-add-btn" onclick="toggleProduct(\'' + item.productId + '\',' + item.price + ')">' + (inCart ? '✓' : '+') + '</button>' +
+      precioHtml +
+      '<button class="product-add-btn" onclick="toggleProduct(\'' + item.productId + '\',' + (precioLibre ? 'null' : item.price) + ')">' + (inCart ? '✓' : '+') + '</button>' +
     '</div>';
   }).join('');
   updateCartBadge();
@@ -3212,11 +3276,35 @@ function toggleProduct(productId, price) {
   const idx = currentSale.items.findIndex(i => i.productId === productId);
   if (idx >= 0) {
     currentSale.items.splice(idx, 1);
-  } else {
-    const prod = DB.products.find(p => p.id === productId);
-    currentSale.items.push({ productId, nombre: prod.nombre, unidad: prod.unidad, price: parseFloat(price), qty: 1 });
+    renderProductPicker();
+    return;
   }
+  // Precio libre: leer desde el input
+  if (price === null || price === undefined) {
+    const input = document.getElementById('precio-libre-' + productId);
+    const val = input ? parseFloat(input.value) : 0;
+    if (!val || val <= 0) {
+      showToast('⚠️ Ingresa el precio antes de agregar');
+      if (input) input.focus();
+      return;
+    }
+    price = val;
+  }
+  const prod = DB.products.find(p => p.id === productId);
+  currentSale.items.push({ productId, nombre: prod.nombre, unidad: prod.unidad, price: parseFloat(price), qty: 1 });
   renderProductPicker();
+}
+
+// Actualiza el precio en carrito cuando el vendedor cambia el valor en el input de precio libre
+function onPrecioLibreChange(productId) {
+  const input = document.getElementById('precio-libre-' + productId);
+  if (!input) return;
+  const val = parseFloat(input.value) || 0;
+  const idx = currentSale.items.findIndex(i => i.productId === productId);
+  if (idx >= 0) {
+    currentSale.items[idx].price = val;
+    renderCart();
+  }
 }
 
 function updateCartBadge() {
@@ -3232,8 +3320,7 @@ function renderCart() {
     return;
   }
   // Saldo de la ruta del vendedor para validación visual en carrito
-  const _rutaCart = (DB.rutas || []).find(r => r.vendedorId === (currentUser ? currentUser.id.toString() : null) ||
-    r.vendedorId?.toString() === (currentUser ? currentUser.id.toString() : null));
+  const _rutaCart = getMiRuta();
   const _saldoCart = currentUser ? calcSaldo(currentUser.id) : {};
 
   el.innerHTML = currentSale.items.map((item, idx) => {
@@ -3426,11 +3513,9 @@ function generateConsecutivo() {
 async function saveSale() {
   if (!currentSale.client || !currentSale.items.length) { showToast('Venta incompleta'); return; }
 
-  // ── VALIDACIÓN DE STOCK — solo si la ruta del vendedor maneja inventario ──
+  // ── VALIDACIÓN DE STOCK — solo si alguna ruta del vendedor maneja inventario ──
   if (currentUser) {
-    const rutaVendedor = (DB.rutas || []).find(function(r) {
-      return r.vendedorId && r.vendedorId.toString() === currentUser.id.toString();
-    });
+    const rutaVendedor = getMisRutas().find(r => r.manejaInventario !== false) || getMiRuta();
     const rutaManejaInventario = !rutaVendedor || rutaVendedor.manejaInventario !== false;
     if (rutaManejaInventario) {
       const saldoActual = calcSaldo(currentUser.id);
@@ -3474,7 +3559,7 @@ async function saveSale() {
     listaNombre: lista ? lista.name : '',
     fecha: now.toISOString(),
     subtotal:       parseFloat(subtotalBruto.toFixed(0)),
-    descuentoPct:   parseFloat(descTotalPct.toFixed(0)),
+    descuentoPct:   parseFloat(descTotalPct.toFixed(2)),
     descuentoValor: parseFloat(descTotalValor.toFixed(0)),
     total:          parseFloat(total.toFixed(0)),
     notes: document.getElementById('sale-notes').value,
@@ -4979,8 +5064,12 @@ function renderInfInventario() {
 
   let hayDatos = false;
   rutas.forEach(ruta => {
-    const vend  = (DB.usuarios||[]).find(u => u.id === ruta.vendedorId);
-    const saldo = calcSaldoHasta(ruta.vendedorId || '', fechaCorte);
+    const vendedorIds = getVendedorIdsDeRuta(ruta);
+    const vendNombres = vendedorIds.length
+      ? vendedorIds.map(vid => { const u = (DB.usuarios||[]).find(u => u.id == vid); return u ? u.nombre : vid; }).join(', ')
+      : 'Sin vendedor asignado';
+    // Para inventario usamos el primer vendedor (el saldo se calcula por vendedorId individual)
+    const saldo = calcSaldoHasta(vendedorIds[0] || '', fechaCorte);
     const prods = Object.values(saldo).filter(p => p.traslado > 0 || p.disponible !== 0);
     if (!prods.length) return;
     hayDatos = true;
@@ -5002,7 +5091,7 @@ function renderInfInventario() {
       <div class="inf-card-header">
         <div>
           <div class="inf-card-title">🗺 ${ruta.nombre}</div>
-          <div style="font-size:0.7rem;color:var(--ink-muted)">${vend ? '👤 ' + vend.nombre : 'Sin vendedor asignado'}</div>
+          <div style="font-size:0.7rem;color:var(--ink-muted)">${vendedorIds.length ? '👤 ' + vendNombres : 'Sin vendedor asignado'}</div>
         </div>
         <div style="font-size:0.72rem;color:var(--ink-muted)">${prods.length} prod.</div>
       </div>
@@ -5026,16 +5115,18 @@ function exportarInventarioExcel() {
 
   const rows = [];
   rutas.forEach(ruta => {
-    const vend  = (DB.usuarios||[]).find(u => u.id === ruta.vendedorId);
-    const saldo = calcSaldoHasta(ruta.vendedorId || '', fechaCorte);
+    const vendedorIds = getVendedorIdsDeRuta(ruta);
+    const vendNom = vendedorIds.map(vid => { const u = (DB.usuarios||[]).find(u => u.id == vid); return u ? u.nombre : vid; }).join(', ') || 'Sin vendedor';
+    // Calcular saldo usando el primer vendedorId (el inventario es por vendedor)
+    const saldo = calcSaldoHasta(vendedorIds[0] || '', fechaCorte);
     const prods = Object.values(saldo)
       .filter(p => p.traslado > 0 || p.disponible !== 0)
       .sort((a,b) => a.nombre.localeCompare(b.nombre));
 
     prods.forEach(p => {
       rows.push([
-        ruta.nombre,                           // Ruta
-        vend ? vend.nombre : 'Sin vendedor',   // Vendedor
+        ruta.nombre,   // Ruta
+        vendNom,       // Vendedor(es)
         p.productId || '',                     // ID Producto
         p.nombre || '',                        // Producto
         p.unidad || '',                        // Unidad
@@ -5670,13 +5761,15 @@ function _poblarVendedoresHist(rutaId) {
   let ventasFiltradas = DB.sales;
 
   if (rutaId) {
-    // Vendedores asignados a esa ruta
     const idsClientesRuta = (DB.rutaClientes || [])
       .filter(rc => rc.rutaId === rutaId).map(rc => rc.clientId);
-    const vendedorRuta = (DB.rutas || []).find(r => r.id === rutaId);
-    const vendedorIdRuta = vendedorRuta ? vendedorRuta.vendedorId : null;
+    const rutaObj = (DB.rutas || []).find(r => r.id === rutaId);
+    // Soporte multi-vendedor
+    const vendedorIdsRuta = rutaObj
+      ? (rutaObj.vendedorIds || (Array.isArray(rutaObj.vendedorId) ? rutaObj.vendedorId : (rutaObj.vendedorId ? [rutaObj.vendedorId] : [])))
+      : [];
     ventasFiltradas = DB.sales.filter(s =>
-      idsClientesRuta.includes(s.clientId) || s.usuarioId === vendedorIdRuta
+      idsClientesRuta.includes(s.clientId) || vendedorIdsRuta.includes(s.usuarioId)
     );
   }
 
@@ -6021,11 +6114,9 @@ function _poblarVendedoresClientes(rutaId) {
   const sel = document.getElementById('clients-filtro-vendedor');
   let vendedores = (DB.usuarios || []).filter(u => u.estado === 'activo' && u.rol === 'vendedor');
   if (rutaId) {
-    // Solo el vendedor asignado a esa ruta
     const ruta = (DB.rutas || []).find(r => r.id === rutaId);
-    vendedores = ruta && ruta.vendedorId
-      ? vendedores.filter(u => u.id === ruta.vendedorId)
-      : [];
+    const vids = getVendedorIdsDeRuta(ruta);
+    vendedores = vids.length ? vendedores.filter(u => vids.includes(u.id)) : [];
   }
   sel.innerHTML = '<option value="">👤 Todos los vendedores</option>' +
     vendedores.map(u => `<option value="${u.id}">${u.nombre}</option>`).join('');
@@ -6095,8 +6186,10 @@ function renderClientsList(filter = '') {
     if (!rc) return null;
     const ruta = (DB.rutas || []).find(r => r.id === rc.rutaId);
     if (!ruta) return null;
-    const vend = (DB.usuarios || []).find(u => u.id === ruta.vendedorId);
-    return { nombre: ruta.nombre, vendedor: vend ? vend.nombre : null };
+    const vend = getVendedorIdsDeRuta(ruta)
+      .map(vid => { const u = (DB.usuarios||[]).find(u => u.id == vid); return u ? u.nombre : null; })
+      .filter(Boolean).join(', ') || null;
+    return { nombre: ruta.nombre, vendedor: vend };
   };
 
   el.innerHTML = list.map(c => {
@@ -6130,10 +6223,94 @@ function renderClientsList(filter = '') {
 function filterClients(v) { renderClientsList(v || ''); }
 
 function populateCiudadSelect(selected = '') {
-  const ciudades = DB.ciudades || [];
-  const sel = document.getElementById('client-ciudad');
-  sel.innerHTML = '<option value="">— Seleccionar ciudad —</option>' +
-    ciudades.map(c => `<option value="${c}" ${c===selected?'selected':''}>${c}</option>`).join('');
+  // Rellenar el input visible y el hidden con el valor seleccionado
+  const input  = document.getElementById('client-ciudad-input');
+  const hidden = document.getElementById('client-ciudad');
+  if (input)  input.value  = selected ? selected.toUpperCase() : '';
+  if (hidden) hidden.value = selected ? selected.toUpperCase() : '';
+}
+
+function onCiudadInput(val) {
+  const q       = val.trim().toUpperCase();
+  const hidden  = document.getElementById('client-ciudad');
+  const drop    = document.getElementById('client-ciudad-dropdown');
+  if (!drop) return;
+
+  // Actualizar el campo hidden en tiempo real (en mayúsculas)
+  if (hidden) hidden.value = q;
+
+  const ciudades = (DB.ciudades || []);
+  const matches  = q
+    ? ciudades.filter(c => c.toUpperCase().includes(q))
+    : ciudades;
+
+  let html = '';
+
+  // Opción de registrar ciudad nueva si el texto no coincide exactamente con ninguna
+  const exactMatch = ciudades.some(c => c.toUpperCase() === q);
+  if (q && !exactMatch) {
+    html += `<div onclick="seleccionarCiudad('${q}', true)"
+      style="padding:10px 14px;cursor:pointer;background:#fffbeb;color:#92400e;
+             font-weight:600;border-bottom:1px solid #fde68a;font-size:0.85rem">
+      ➕ Registrar "<strong>${q}</strong>" como ciudad nueva
+    </div>`;
+  }
+
+  // Ciudades existentes que coinciden
+  matches.forEach(c => {
+    const cu = c.toUpperCase();
+    html += `<div onclick="seleccionarCiudad('${cu}', false)"
+      style="padding:10px 14px;cursor:pointer;font-size:0.88rem;border-bottom:1px solid #f0f0f0"
+      onmousedown="event.preventDefault()">
+      🏙 ${cu}
+    </div>`;
+  });
+
+  if (!html) {
+    html = '<div style="padding:10px 14px;color:#888;font-size:0.85rem">Sin resultados</div>';
+  }
+
+  drop.innerHTML = html;
+  drop.style.display = 'block';
+}
+
+function seleccionarCiudad(nombre, esNueva) {
+  const nombreUp = nombre.toUpperCase();
+  const input    = document.getElementById('client-ciudad-input');
+  const hidden   = document.getElementById('client-ciudad');
+  const drop     = document.getElementById('client-ciudad-dropdown');
+  if (input)  input.value  = nombreUp;
+  if (hidden) hidden.value = nombreUp;
+  if (drop)   drop.style.display = 'none';
+
+  if (esNueva) {
+    // Agregar a DB.ciudades localmente si no existe
+    if (!DB.ciudades) DB.ciudades = [];
+    if (!DB.ciudades.some(c => c.toUpperCase() === nombreUp)) {
+      DB.ciudades.push(nombreUp);
+      saveDB();
+      // Sincronizar con Sheets
+      if (DB.config && DB.config.appsScriptUrl) {
+        syncRecord('ciudad', { nombre: nombreUp });
+      }
+      showToast('✅ Ciudad "' + nombreUp + '" registrada');
+    }
+  }
+}
+
+function onCiudadBlur() {
+  // Pequeño delay para permitir que el onclick del dropdown se dispare primero
+  setTimeout(() => {
+    const drop  = document.getElementById('client-ciudad-dropdown');
+    const input = document.getElementById('client-ciudad-input');
+    const hidden = document.getElementById('client-ciudad');
+    if (drop)  drop.style.display = 'none';
+    // Normalizar a mayúsculas al perder el foco
+    if (input && hidden) {
+      input.value  = input.value.toUpperCase();
+      hidden.value = input.value;
+    }
+  }, 180);
 }
 
 function populateClientRutaSelect(rutaIdSeleccionada = '') {
@@ -6197,10 +6374,11 @@ function onClientRutaChange() {
   const rutaId = document.getElementById('client-ruta').value;
   const ruta = (DB.rutas || []).find(r => r.id === rutaId);
   const infoEl = document.getElementById('client-ruta-vendedor');
-  if (ruta && ruta.vendedorId) {
-    const vend = (DB.usuarios || []).find(u => u.id === ruta.vendedorId);
-    infoEl.innerHTML = vend
-      ? `<span style="color:var(--green-mid)">✅ Vendedor responsable: <b>${vend.nombre}</b></span>`
+  const vids = getVendedorIdsDeRuta(ruta);
+  if (ruta && vids.length) {
+    const nombres = vids.map(vid => { const u = (DB.usuarios||[]).find(u => u.id == vid); return u ? u.nombre : null; }).filter(Boolean).join(', ');
+    infoEl.innerHTML = nombres
+      ? `<span style="color:var(--green-mid)">✅ Vendedor(es): <b>${nombres}</b></span>`
       : `<span style="color:#dc2626">⚠️ Esta ruta no tiene vendedor asignado</span>`;
   } else if (rutaId) {
     infoEl.innerHTML = `<span style="color:#dc2626">⚠️ Esta ruta no tiene vendedor asignado</span>`;
@@ -6540,9 +6718,11 @@ function renderPriceListSelector() {
   let html = '';
   Object.keys(grupos).forEach(rutaId => {
     const ruta = (DB.rutas || []).find(r => r.id === rutaId);
-    const vend = ruta ? (DB.usuarios || []).find(u => u.id === ruta.vendedorId) : null;
+    const vendNombres = ruta
+      ? getVendedorIdsDeRuta(ruta).map(vid => { const u = (DB.usuarios||[]).find(u => u.id == vid); return u ? u.nombre : null; }).filter(Boolean).join(', ')
+      : null;
     const grupoLabel = ruta
-      ? `🗺️ ${ruta.nombre}${vend ? ' · 👤 ' + vend.nombre : ' · ⚠️ Sin vendedor'}`
+      ? `🗺️ ${ruta.nombre}${vendNombres ? ' · 👤 ' + vendNombres : ' · ⚠️ Sin vendedor'}`
       : '🌐 Listas globales (sin ruta)';
 
     html += `<div style="margin-bottom:20px">
@@ -7098,23 +7278,26 @@ async function syncFromSheets(showFeedback = false) {
     const resAll = await fetchConTimeout(urlAll);
     const dataAll = await resAll.json();
 
-    // ── Fusionar clientes: Sheets es fuente de verdad, pero conservar locales que Sheets aún no tenga
+    // ── Fusionar clientes: Sheets es fuente de verdad (incluso para borrados)
+    // Solo conservar locales que aún están PENDIENTES de subir a Sheets
     if (dataAll.clients) {
       const sheetsIds = new Set(dataAll.clients.map(c => c.id));
-      // Clientes locales que Sheets aún no confirma (recién creados, sync pendiente)
-      const soloLocales = DB.clients.filter(c => !sheetsIds.has(c.id));
+      // IDs pendientes de subir (creados/editados offline)
+      const pendingClientIds = new Set(
+        getSyncQueue().filter(op => op.type === 'client').map(op => op.data && op.data.id).filter(Boolean)
+      );
+      // Solo conservar locales pendientes que Sheets aún no confirma
+      const soloLocales = DB.clients.filter(c => !sheetsIds.has(c.id) && pendingClientIds.has(c.id));
       // Construir mapa local para preservar campos que Sheets aún no tiene
       const localMap = {};
       DB.clients.forEach(cl => { localMap[cl.id] = cl; });
-      // Merge: Sheets es fuente de verdad PERO si trae campo vacío y local lo tiene → preservar local
+      // Merge: Sheets es fuente de verdad
       const mergedClients = dataAll.clients.map(sc => {
         const local = localMap[sc.id];
         if (!local) return sc;
         return {
           ...sc,
-          // Preservar nombreComercial local si Sheets lo trae vacío
           nombreComercial: sc.nombreComercial || local.nombreComercial || '',
-          // Preservar rutaId local si Sheets lo trae vacío
           rutaId: sc.rutaId || local.rutaId || ''
         };
       });
@@ -7127,9 +7310,50 @@ async function syncFromSheets(showFeedback = false) {
         .forEach(rc => DB.rutaClientes.push(rc));
     }
 
-    if (dataAll.products       !== undefined) DB.products       = dataAll.products.length       ? dataAll.products       : DB.products;
-    if (dataAll.priceLists     !== undefined) DB.priceLists     = dataAll.priceLists.length     ? dataAll.priceLists     : DB.priceLists;
-    if (dataAll.priceListItems !== undefined) DB.priceListItems = dataAll.priceListItems.length  ? dataAll.priceListItems : DB.priceListItems;
+    if (dataAll.products !== undefined) {
+      if (dataAll.products.length) {
+        // Sheets es fuente de verdad — reemplaza completamente
+        // Solo conservar productos locales pendientes de subir
+        const sheetsProductIds = new Set(dataAll.products.map(p => p.id));
+        const pendingProductIds = new Set(
+          getSyncQueue().filter(op => op.type === 'product').map(op => op.data && op.data.id).filter(Boolean)
+        );
+        const soloLocalesP = (DB.products || []).filter(p => !sheetsProductIds.has(p.id) && pendingProductIds.has(p.id));
+        DB.products = [...dataAll.products, ...soloLocalesP];
+      } else {
+        // Sheets devuelve 0 productos — solo si hay pendientes conservamos local
+        const pendingProductIds = new Set(
+          getSyncQueue().filter(op => op.type === 'product').map(op => op.data && op.data.id).filter(Boolean)
+        );
+        if (pendingProductIds.size > 0) {
+          DB.products = (DB.products || []).filter(p => pendingProductIds.has(p.id));
+        } else {
+          DB.products = [];
+        }
+      }
+    }
+    if (dataAll.priceLists !== undefined) {
+      // Sheets es fuente de verdad — reemplazar siempre (incluso si viene vacío)
+      DB.priceLists = dataAll.priceLists;
+    }
+    if (dataAll.priceListItems !== undefined) {
+      if (dataAll.priceListItems.length) {
+        // Sheets es fuente de verdad; solo conservar pendientes
+        const sheetsItemKeys = new Set(dataAll.priceListItems.map(i => i.listId + '_' + i.productId));
+        const pendingItemKeys = new Set(
+          getSyncQueue().filter(op => op.type === 'priceitem' || op.type === 'save_priceitem')
+            .map(op => op.data && op.data.listId && op.data.productId ? op.data.listId + '_' + op.data.productId : null)
+            .filter(Boolean)
+        );
+        const soloLocalesI = (DB.priceListItems || []).filter(i => {
+          const key = i.listId + '_' + i.productId;
+          return !sheetsItemKeys.has(key) && pendingItemKeys.has(key);
+        });
+        DB.priceListItems = [...dataAll.priceListItems, ...soloLocalesI];
+      } else {
+        DB.priceListItems = [];
+      }
+    }
     if (dataAll.usuarios !== undefined && dataAll.usuarios.length) {
       // Fusionar usuarios: Sheets es fuente de verdad para datos generales,
       // pero preservar la clave local si Sheets no la trae (evita bloquear el login)
@@ -7140,17 +7364,22 @@ async function syncFromSheets(showFeedback = false) {
         const local = localMap[cedulaStr];
         return {
           ...u,
-          cedula: cedulaStr,                                                         // FIX: siempre string
-          clave:  (u.clave && String(u.clave).trim()) ? String(u.clave).trim()       // FIX: siempre string
+          cedula: cedulaStr,
+          clave:  (u.clave && String(u.clave).trim()) ? String(u.clave).trim()
                     : (local ? local.clave : ''),
-          estado: (u.estado && String(u.estado).trim()) ? String(u.estado).trim()    // FIX: garantizar campo
+          estado: (u.estado && String(u.estado).trim()) ? String(u.estado).trim()
                     : 'activo',
           rol:    (u.rol && String(u.rol).trim()) ? String(u.rol).trim() : 'vendedor'
         };
       });
-      // Usuarios locales que Sheets aún no tiene
+      // Solo conservar usuarios locales que están PENDIENTES de subir
       const sheetsCedulas = new Set(dataAll.usuarios.map(u => String(u.cedula)));
-      const soloLocalesU = DB.usuarios.filter(u => !sheetsCedulas.has(String(u.cedula)));
+      const pendingUsuarioCedulas = new Set(
+        getSyncQueue().filter(op => op.type === 'usuario').map(op => op.data && String(op.data.cedula)).filter(Boolean)
+      );
+      const soloLocalesU = DB.usuarios.filter(u =>
+        !sheetsCedulas.has(String(u.cedula)) && pendingUsuarioCedulas.has(String(u.cedula))
+      );
       if (soloLocalesU.length) DB.usuarios = [...DB.usuarios, ...soloLocalesU];
     }
     // ── Siempre garantizar que el admin principal exista (protegido contra borrado de Sheets)
@@ -7263,18 +7492,25 @@ async function syncFromSheets(showFeedback = false) {
         });
 
         const sheetsVentaIds = new Set(dataSales.sales.map(s => s.id));
-        const soloLocalesV = DB.sales.filter(s => !sheetsVentaIds.has(s.id));
+        // Solo conservar ventas locales que están PENDIENTES de subir a Sheets
+        const pendingSaleIds = new Set(
+          getSyncQueue().filter(op => op.type === 'Sale' || op.type === 'saveSale').map(op => op.data && op.data.id).filter(Boolean)
+        );
+        const soloLocalesV = DB.sales.filter(s => !sheetsVentaIds.has(s.id) && pendingSaleIds.has(s.id));
         DB.sales = [...dataSales.sales, ...soloLocalesV];
       }
     }
 
-    // ── Merge abonos desde Sheets ──
-    if (dataSales && dataSales.abonos && dataSales.abonos.length) {
-      if (!DB.abonos) DB.abonos = [];
-      const localAbonosIds = new Set((DB.abonos).map(a => a.id));
-      dataSales.abonos.forEach(a => {
-        if (!localAbonosIds.has(a.id)) DB.abonos.push(a);
-      });
+    // ── Merge abonos desde Sheets: Sheets es fuente de verdad ──
+    if (dataSales && dataSales.abonos !== undefined) {
+      if (dataSales.abonos.length) {
+        const sheetsAbonosIds = new Set(dataSales.abonos.map(a => a.id));
+        const pendingAbonoIds = new Set(
+          getSyncQueue().filter(op => op.type === 'abono').map(op => op.data && op.data.id).filter(Boolean)
+        );
+        const soloLocalesA = (DB.abonos || []).filter(a => !sheetsAbonosIds.has(a.id) && pendingAbonoIds.has(a.id));
+        DB.abonos = [...dataSales.abonos, ...soloLocalesA];
+      }
     }
 
     saveDB();
@@ -7318,23 +7554,24 @@ function renderRutasList(filter = '') {
     return;
   }
   el.innerHTML = list.map(r => {
-    const vendedor = DB.usuarios.find(u => u.id === r.vendedorId);
+    // vendedorIds: siempre normalizar a array
+    const vendedorIds = r.vendedorIds || (Array.isArray(r.vendedorId) ? r.vendedorId : (r.vendedorId ? [r.vendedorId] : []));
+    const vendedoresNombres = vendedorIds.length
+      ? vendedorIds.map(vid => { const u = DB.usuarios.find(u => u.id == vid); return u ? u.nombre : vid; }).join(', ')
+      : '<em>Sin vendedor asignado</em>';
     const numClientes = (DB.clients || []).filter(c => c.rutaId === r.id).length;
     return `
     <div class="mgmt-item">
       <div class="mgmt-item-info">
         <div class="mgmt-item-name">🗺️ ${r.nombre}</div>
         <div class="mgmt-item-sub">
-          👤 ${vendedor ? vendedor.nombre : '<em>Sin vendedor asignado</em>'}
+          👤 ${vendedoresNombres}
         </div>
         <div class="mgmt-item-sub">
           <span class="badge green">${numClientes} cliente${numClientes!==1?'s':''}</span>
           ${r.manejaInventario !== false
             ? '<span class="badge" style="background:#e8f5e9;color:#1b5e20;margin-left:4px">📦 Con inventario</span>'
             : '<span class="badge" style="background:#fce4ec;color:#b71c1c;margin-left:4px">🚫 Sin inventario</span>'}
-          ${r.manejaCartera !== false
-            ? '<span class="badge" style="background:#e3f2fd;color:#0d47a1;margin-left:4px">💳 Con cartera</span>'
-            : '<span class="badge" style="background:#fce4ec;color:#b71c1c;margin-left:4px">🚫 Sin cartera</span>'}
           ${r.manejaCartera !== false
             ? '<span class="badge" style="background:#e3f2fd;color:#0d47a1;margin-left:4px">💳 Con cartera</span>'
             : '<span class="badge" style="background:#fce4ec;color:#b71c1c;margin-left:4px">🚫 Sin cartera</span>'}
@@ -7435,12 +7672,11 @@ function openModalNuevaRuta() {
   document.getElementById('modal-ruta-title').textContent = 'Nueva Ruta';
   document.getElementById('edit-ruta-id').value = '';
   document.getElementById('ruta-nombre').value = '';
-  _setRutaInvRadio(true);  // por defecto: sí maneja inventario
-  _setRutaCartRadio(true); // por defecto: sí maneja cartera
+  _setRutaInvRadio(true);
+  _setRutaCartRadio(true);
   const sel = document.getElementById('ruta-vendedor');
   const vends = (DB.usuarios || []).filter(u => u.rol === 'vendedor' && u.estado === 'activo');
-  sel.innerHTML = '<option value="">— Sin asignar —</option>' +
-    vends.map(v => `<option value="${v.id}">${v.nombre}</option>`).join('');
+  sel.innerHTML = vends.map(v => `<option value="${v.id}">${v.nombre}</option>`).join('');
   openModal('modal-ruta');
 }
 
@@ -7448,19 +7684,24 @@ function openModalEditRuta(r) {
   document.getElementById('modal-ruta-title').textContent = 'Editar Ruta';
   document.getElementById('edit-ruta-id').value = r.id;
   document.getElementById('ruta-nombre').value = r.nombre;
-  _setRutaInvRadio(r.manejaInventario !== false);  // default true para rutas antiguas
-  _setRutaCartRadio(r.manejaCartera !== false);    // default true para rutas antiguas
+  _setRutaInvRadio(r.manejaInventario !== false);
+  _setRutaCartRadio(r.manejaCartera !== false);
   const sel = document.getElementById('ruta-vendedor');
   const vends = (DB.usuarios || []).filter(u => u.rol === 'vendedor' && u.estado === 'activo');
-  sel.innerHTML = '<option value="">— Sin asignar —</option>' +
-    vends.map(v => `<option value="${v.id}" ${v.id.toString() === (r.vendedorId || '').toString() ? 'selected' : ''}>${v.nombre}</option>`).join('');
+  // vendedorIds: siempre array
+  const asignados = r.vendedorIds || (Array.isArray(r.vendedorId) ? r.vendedorId : (r.vendedorId ? [r.vendedorId] : []));
+  const asignadosStr = asignados.map(String);
+  sel.innerHTML = vends.map(v => `<option value="${v.id}" ${asignadosStr.includes(v.id.toString()) ? 'selected' : ''}>${v.nombre}</option>`).join('');
   openModal('modal-ruta');
 }
 
 function saveRuta() {
   const nombre = document.getElementById('ruta-nombre').value.trim();
   if (!nombre) { showToast('⚠️ El nombre de la ruta es requerido'); return; }
-  const vendedorId = document.getElementById('ruta-vendedor').value || null;
+  // Leer vendedores seleccionados (multiselect)
+  const sel = document.getElementById('ruta-vendedor');
+  const vendedorIds = Array.from(sel.selectedOptions).map(o => o.value).filter(Boolean);
+  const vendedorId  = vendedorIds.length === 1 ? vendedorIds[0] : vendedorIds;
   const invRadio  = document.querySelector('input[name="ruta-inv"]:checked');
   const cartRadio = document.querySelector('input[name="ruta-cart"]:checked');
   if (!invRadio)  { showToast('⚠️ Indica si la ruta maneja inventario'); return; }
@@ -7472,10 +7713,10 @@ function saveRuta() {
   let rutaData;
   if (editId) {
     const idx = DB.rutas.findIndex(r => r.id === editId);
-    DB.rutas[idx] = { ...DB.rutas[idx], nombre, vendedorId, manejaInventario, manejaCartera };
+    DB.rutas[idx] = { ...DB.rutas[idx], nombre, vendedorId, vendedorIds, manejaInventario, manejaCartera };
     rutaData = DB.rutas[idx];
   } else {
-    rutaData = { id: 'R' + Date.now(), nombre, vendedorId, manejaInventario, manejaCartera };
+    rutaData = { id: 'R' + Date.now(), nombre, vendedorId, vendedorIds, manejaInventario, manejaCartera };
     DB.rutas.push(rutaData);
   }
   saveDB();
@@ -7669,9 +7910,9 @@ function getInvMovimientos() {
   return DB.inventario || [];
 }
 
-// Helper: obtiene el rutaId de un vendedor
+// Helper: obtiene el rutaId de un vendedor (primera ruta que lo contenga)
 function getRutaIdDeVendedor(vendedorId) {
-  const ruta = (DB.rutas || []).find(r => r.vendedorId && r.vendedorId.toString() === (vendedorId || '').toString());
+  const ruta = (DB.rutas || []).find(r => rutaTieneVendedor(r, vendedorId));
   return ruta ? ruta.id : null;
 }
 
@@ -8009,7 +8250,7 @@ function exportarInventarioPDF() {
   const bloques = vendedores.map(v => {
     const saldo = calcSaldo(v.id);
     const prods = Object.values(saldo).filter(p => p.disponible > 0);
-    const ruta  = (DB.rutas || []).find(r => r.vendedorId && r.vendedorId.toString() === v.id.toString());
+    const ruta  = (DB.rutas || []).find(r => rutaTieneVendedor(r, v.id));
 
     const getCategoria = p => {
       const prod = (DB.products || []).find(pr => pr.id === p.productId);
@@ -8289,12 +8530,13 @@ function renderInvSaldos() {
     if (selRuta.innerHTML !== rutasSel) selRuta.innerHTML = rutasSel;
     if (selRuta.value) {
       const ruta = rutasConInv.find(r => r.id === selRuta.value);
-      vendedores = ruta && ruta.vendedorId
-        ? vendedores.filter(v => v.id.toString() === ruta.vendedorId.toString())
-        : [];
+      const vids = getVendedorIdsDeRuta(ruta);
+      vendedores = vids.length ? vendedores.filter(v => vids.includes(v.id.toString())) : [];
     } else {
       // Sin filtro: mostrar solo vendedores con rutas de inventario
-      const vendIdsConInv = new Set(rutasConInv.map(r => r.vendedorId).filter(Boolean).map(String));
+      const vendIdsConInv = new Set(
+        rutasConInv.flatMap(r => getVendedorIdsDeRuta(r)).filter(Boolean).map(String)
+      );
       vendedores = vendedores.filter(v => vendIdsConInv.has(v.id.toString()));
     }
   } else {
@@ -8332,7 +8574,7 @@ function renderInvSaldos() {
     let prods = Object.values(saldo);
     if (search) prods = prods.filter(p => p.nombre.toLowerCase().includes(search));
 
-    const rutaActual = (DB.rutas || []).find(r => r.vendedorId && r.vendedorId.toString() === v.id.toString());
+    const rutaActual = (DB.rutas || []).find(r => rutaTieneVendedor(r, v.id));
     const rutaInfo = rutaActual ? ` · 🗺️ ${rutaActual.nombre}` : '';
 
     // Solo mostrar encabezado de vendedor si hay admin/sup viendo varios
@@ -8641,12 +8883,11 @@ function movCardHTML(m) {
 function openModalTraslado() {
   if (!puedeHacer('inv:traslados')) { showToast('Sin permiso para crear traslados'); return; }
 
-  // Solo vendedores activos cuya ruta tenga manejaInventario = true (o sin ruta asignada — admin puede elegir)
+  // Solo vendedores activos cuya ruta tenga manejaInventario = true
   const sel = document.getElementById('traslado-vendedor');
   const vendedores = (DB.usuarios || []).filter(u => u.estado === 'activo' && u.rol === 'vendedor');
   const vendedoresConInv = vendedores.filter(u => {
-    const ruta = (DB.rutas || []).find(r => r.vendedorId && r.vendedorId.toString() === u.id.toString());
-    // Si tiene ruta: debe tener manejaInventario !== false. Si no tiene ruta: se incluye (admin asigna)
+    const ruta = (DB.rutas || []).find(r => rutaTieneVendedor(r, u.id));
     return !ruta || ruta.manejaInventario !== false;
   });
 
@@ -8656,7 +8897,7 @@ function openModalTraslado() {
 
   sel.innerHTML = '<option value="">— Selecciona vendedor —</option>' +
     vendedoresConInv.map(u => {
-      const ruta = (DB.rutas || []).find(r => r.vendedorId && r.vendedorId.toString() === u.id.toString());
+      const ruta = (DB.rutas || []).find(r => rutaTieneVendedor(r, u.id));
       const label = ruta ? `${u.nombre} · 🗺️ ${ruta.nombre}` : u.nombre;
       return `<option value="${u.id}">${label}</option>`;
     }).join('');
@@ -8669,9 +8910,8 @@ function openModalTraslado() {
 }
 
 function populateTrasladoRuta() {
-  // Actualiza silenciosamente el campo hidden con la ruta actual del vendedor (metadato)
   const vendedorId = document.getElementById('traslado-vendedor').value;
-  const ruta = (DB.rutas || []).find(r => r.vendedorId && r.vendedorId.toString() === vendedorId.toString());
+  const ruta = (DB.rutas || []).find(r => rutaTieneVendedor(r, vendedorId));
   document.getElementById('traslado-ruta').value = ruta ? ruta.id : '';
 }
 
@@ -9042,7 +9282,8 @@ function saveCambio() {
   if (!fecha)  { showToast('Selecciona la fecha'); return; }
 
   const ruta     = (DB.rutas || []).find(r => r.id === rutaId);
-  const vendedor = ruta ? (DB.usuarios || []).find(u => u.id === ruta.vendedorId) : null;
+  // Vendedor activo = usuario logueado (puede ser uno de varios en la ruta)
+  const vendedor = currentUser ? (DB.usuarios || []).find(u => u.id === currentUser.id) : null;
 
   // Cliente seleccionado
   const clienteId  = document.getElementById('cambio-cliente').value;
@@ -9109,7 +9350,7 @@ function registrarVentaEnInventario(sale) {
   // El inventario está ligado al vendedor; la ruta es referencia del momento
   const vendedor = (DB.usuarios || []).find(u => u.id && u.id.toString() === (sale.usuarioId || '').toString());
   if (!sale.usuarioId) return;
-  const rutaVendedor = (DB.rutas || []).find(r => r.vendedorId && r.vendedorId.toString() === (sale.usuarioId || '').toString());
+  const rutaVendedor = (DB.rutas || []).find(r => rutaTieneVendedor(r, sale.usuarioId));
 
   const productos = sale.items.map(i => ({
     productId: i.productId,
@@ -10037,6 +10278,8 @@ function dtInitInformes() {
 // ── INVENTARIO ─────────────────────────────────────────────────────
 function dtRenderInventario() {
   const rutaOpts = (DB.rutas||[]).map(r=>'<option value="'+r.id+'">'+r.nombre+'</option>').join('');
+  const puedeTraslados = puedeHacer('inv:traslados');
+  const puedeCambios   = puedeHacer('inv:cambios');
   return '<div class="dt-panel"><div class="dt-panel-header"><div class="dt-panel-title">📦 Inventario</div>'
     +'<div class="dt-filters">'
     +'<button class="dt-btn dt-btn-primary dt-btn-sm" id="dtinv-tab-saldos" data-tab="saldos" onclick="dtInvTab(this.dataset.tab)">📊 Saldos</button>'
@@ -10044,6 +10287,8 @@ function dtRenderInventario() {
     +'<button class="dt-btn dt-btn-outline dt-btn-sm" id="dtinv-tab-cambios" data-tab="cambios" onclick="dtInvTab(this.dataset.tab)">🔄 Cambios</button>'
     +'<button class="dt-btn dt-btn-outline dt-btn-sm" id="dtinv-tab-movimientos" data-tab="movimientos" onclick="dtInvTab(this.dataset.tab)">📋 Movimientos</button>'
     +'<select class="dt-filter-select" id="dt-inv-ruta" onchange="dtRenderInvContent()"><option value="">🗺 Todas las rutas</option>'+rutaOpts+'</select>'
+    +(puedeTraslados ? '<button class="dt-btn dt-btn-primary dt-btn-sm" id="dtinv-btn-traslado" onclick="openModalTraslado()" style="margin-left:8px">🚚 + Traslado</button>' : '')
+    +(puedeCambios   ? '<button class="dt-btn dt-btn-outline dt-btn-sm"  id="dtinv-btn-cambio"   onclick="openModalCambio()"   style="margin-left:4px">🔄 + Cambio</button>'   : '')
     +'</div></div>'
     +'<div class="dt-panel-nopada" id="dt-inv-content"></div>'
     +'</div>';
@@ -10079,11 +10324,12 @@ function dtRenderInvContent() {
     if (esAdminSup) {
       if (rutaFiltro) {
         const ruta = rutasConInv.find(r => r.id === rutaFiltro);
-        vendedores = ruta && ruta.vendedorId
-          ? vendedores.filter(v => v.id.toString() === ruta.vendedorId.toString())
-          : [];
+        const vids = getVendedorIdsDeRuta(ruta);
+        vendedores = vids.length ? vendedores.filter(v => vids.includes(v.id.toString())) : [];
       } else {
-        const vendIdsConInv = new Set(rutasConInv.map(r => r.vendedorId).filter(Boolean).map(String));
+        const vendIdsConInv = new Set(
+          rutasConInv.flatMap(r => getVendedorIdsDeRuta(r)).filter(Boolean).map(String)
+        );
         vendedores = vendedores.filter(v => vendIdsConInv.has(v.id.toString()));
       }
     } else {
@@ -10296,9 +10542,11 @@ function dtRenderListas() {
   var html = '';
   Object.keys(grupos).forEach(function(rutaId) {
     var ruta = (DB.rutas||[]).find(function(r){ return r.id === rutaId; });
-    var vend = ruta ? (DB.usuarios||[]).find(function(u){ return u.id === ruta.vendedorId; }) : null;
+    var vendNoms = ruta
+      ? getVendedorIdsDeRuta(ruta).map(function(vid){ var u=(DB.usuarios||[]).find(function(u){return u.id==vid;}); return u?u.nombre:null; }).filter(Boolean).join(', ')
+      : null;
     var grupoLabel = ruta
-      ? ('🗺️ ' + ruta.nombre + (vend ? ' · 👤 ' + vend.nombre : ' · ⚠️ Sin vendedor'))
+      ? ('🗺️ ' + ruta.nombre + (vendNoms ? ' · 👤 ' + vendNoms : ' · ⚠️ Sin vendedor'))
       : '🌐 Listas globales';
     html += '<div style="margin-bottom:20px">'
       + '<div style="font-size:0.72rem;font-weight:700;color:#0f3460;text-transform:uppercase;'
