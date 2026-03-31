@@ -2320,7 +2320,7 @@ function cerrarBannerPWA() {
 // DATA STORE
 // ═══════════════════════════════════════════════
 let DB = {
-  config: { appsScriptUrl: 'https://script.google.com/macros/s/AKfycbxSpbWeryHOe7ukM5cSKfOMA3cIZ5SFyYVZ-Bmzv4pdDakppSKI1iLuyPb_Z03rJHiYBA/exec', sellerName: 'Vendedor' },
+  config: { appsScriptUrl: 'https://script.google.com/macros/s/AKfycbwUtFcqufZKXLvO8fYxcRaUk7En-0pOytYttA-oz1mjy4G3vtDZ9-R5-fOELOBRv_p9OA/exec', sellerName: 'Vendedor' },
   clients: [],
   products: [],
   priceLists: [],
@@ -2435,7 +2435,7 @@ function loadDB() {
 // INIT
 // ═══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  const URL_ACTUAL = 'https://script.google.com/macros/s/AKfycbxSpbWeryHOe7ukM5cSKfOMA3cIZ5SFyYVZ-Bmzv4pdDakppSKI1iLuyPb_Z03rJHiYBA/exec';
+  const URL_ACTUAL = 'https://script.google.com/macros/s/AKfycbwUtFcqufZKXLvO8fYxcRaUk7En-0pOytYttA-oz1mjy4G3vtDZ9-R5-fOELOBRv_p9OA/exec';
 
   // Si la URL guardada es diferente a la actual, limpiar datos locales
   const urlGuardada = localStorage.getItem('ventaruta_url');
@@ -7217,7 +7217,7 @@ async function syncAll() {
   // Recuperar URL si por alguna razón no está en DB.config
   if (!DB.config.appsScriptUrl) {
     const respaldo = localStorage.getItem('ventaruta_url') ||
-      'https://script.google.com/macros/s/AKfycbxSpbWeryHOe7ukM5cSKfOMA3cIZ5SFyYVZ-Bmzv4pdDakppSKI1iLuyPb_Z03rJHiYBA/exec';
+      'https://script.google.com/macros/s/AKfycbwUtFcqufZKXLvO8fYxcRaUk7En-0pOytYttA-oz1mjy4G3vtDZ9-R5-fOELOBRv_p9OA/exec';
     if (respaldo) { DB.config.appsScriptUrl = respaldo; saveDB(); }
   }
   if (!DB.config.appsScriptUrl) { showToast('Configura la URL de Google Sheets primero'); return; }
@@ -7252,7 +7252,7 @@ function parseFecha(val) {
 async function syncFromSheets(showFeedback = false) {
   if (!DB.config.appsScriptUrl) {
     const respaldo = localStorage.getItem('ventaruta_url') ||
-      'https://script.google.com/macros/s/AKfycbxSpbWeryHOe7ukM5cSKfOMA3cIZ5SFyYVZ-Bmzv4pdDakppSKI1iLuyPb_Z03rJHiYBA/exec';
+      'https://script.google.com/macros/s/AKfycbwUtFcqufZKXLvO8fYxcRaUk7En-0pOytYttA-oz1mjy4G3vtDZ9-R5-fOELOBRv_p9OA/exec';
     if (respaldo) { DB.config.appsScriptUrl = respaldo; saveDB(); }
   }
   if (!DB.config.appsScriptUrl) return;
@@ -8031,7 +8031,7 @@ function confirmarAnularVenta(saleId) {
   // Paso 1: advertencia
   if (!confirm('ADVERTENCIA\n\nEstas a punto de ANULAR la venta ' + (sale.numFactura || saleId) + ' del cliente ' + sale.clientNombre + '.\n\nEsta accion no se puede deshacer.\n\n¿Deseas continuar?')) return;
   // Paso 2: confirmacion final
-  if (!confirm('CONFIRMAR ANULACION\n\n¿Estas seguro de ANULAR esta venta?\n\nLas cantidades y el total quedaran en CERO.\nLos abonos deben anularse por separado.')) return;
+  if (!confirm('CONFIRMAR ANULACION\n\n¿Estas seguro de ANULAR esta venta?\n\nSe borraran:\n• Cantidades, precios y descuentos\n• Montos y totales\n• Abonos registrados\n• Saldo por pagar\n• Retenciones\n\nSe conserva: cliente, fecha, número de factura y lista de productos.')) return;
   anularVenta(saleId);
 }
 
@@ -8047,17 +8047,81 @@ function anularVenta(saleId) {
   if (idx < 0) return;
   const sale = DB.sales[idx];
 
+  // ── Anular la venta: conservar datos de identificación, borrar todo lo financiero ──
   DB.sales[idx] = {
-    ...sale,
-    anulada:       true,
-    items:         (sale.items || []).map(i => ({ ...i, qty: 0, descPct: 0 })),
-    total:         0,
-    subtotal:      0,
-    descuentoValor: 0,
-    saldoPorPagar: 0,
-    anuladoPor:    currentUser ? currentUser.nombre : '',
-    fechaAnulacion: new Date().toISOString()
+    // ── Conservar: identificación, cliente, fecha, ruta, vendedor ──
+    id:              sale.id,
+    numFactura:      sale.numFactura      || '',
+    clientId:        sale.clientId        || '',
+    clientNombre:    sale.clientNombre    || '',
+    listaId:         sale.listaId         || '',
+    listaNombre:     sale.listaNombre     || '',
+    fecha:           sale.fecha,
+    vendedor:        sale.vendedor        || '',
+    usuarioId:       sale.usuarioId       || '',
+    usuarioCedula:   sale.usuarioCedula   || '',
+    tipoPago:        sale.tipoPago        || 'CONTADO',
+    notes:           sale.notes           || '',
+    rutaId:          sale.rutaId          || '',
+    // ── Borrar: productos, montos, abonos, saldo, retenciones ──
+    items:           (sale.items || []).map(i => ({
+      productId: i.productId,
+      nombre:    i.nombre,
+      unidad:    i.unidad || '',
+      qty:       0,
+      price:     0,
+      descPct:   0
+    })),
+    subtotal:        0,
+    descuentoPct:    0,
+    descuentoValor:  0,
+    total:           0,
+    abono:           0,
+    abonoInicial:    0,
+    saldoPorPagar:   0,
+    firmaBase64:     null,
+    numFacturaElec:  '',
+    retencionRte:    0,
+    retencionIca:    0,
+    retencionIva:    0,
+    retenciones:     null,
+    // ── Metadatos de anulación ──
+    anulada:         true,
+    anuladoPor:      currentUser ? currentUser.nombre : '',
+    fechaAnulacion:  new Date().toISOString()
   };
+
+  // ── Anular todos los abonos asociados a esta venta ──
+  if (DB.abonos) {
+    DB.abonos.forEach((a, i) => {
+      if (a.ventaId === saleId && !a.anulado) {
+        DB.abonos[i] = {
+          ...DB.abonos[i],
+          monto:          0,
+          anulado:        true,
+          nota:           (DB.abonos[i].nota ? DB.abonos[i].nota + ' | ' : '') + 'ANULADO POR ANULACIÓN DE VENTA',
+          anuladoPor:     currentUser ? currentUser.nombre : '',
+          fechaAnulacion: new Date().toISOString()
+        };
+        syncRecord('abono', DB.abonos[i]);
+      }
+    });
+  }
+
+  // ── Revertir movimiento de inventario: poner cantidades en 0 ──
+  const movInvId = 'VT' + saleId;
+  DB.inventario = DB.inventario || [];
+  const movInvIdx = DB.inventario.findIndex(m => m.id === movInvId);
+  if (movInvIdx >= 0) {
+    DB.inventario[movInvIdx] = {
+      ...DB.inventario[movInvIdx],
+      productos:      (DB.inventario[movInvIdx].productos || []).map(p => ({ ...p, qty: 0 })),
+      anulado:        true,
+      obs:            (DB.inventario[movInvIdx].obs || '') + ' [VENTA ANULADA]',
+      fechaAnulacion: new Date().toISOString()
+    };
+    syncRecord('inventario', DB.inventario[movInvIdx]);
+  }
 
   saveDB();
   syncRecord('Sale', DB.sales[idx]);
@@ -8065,9 +8129,6 @@ function anularVenta(saleId) {
   renderCarteraClientes();
   showToast('🚫 Venta anulada — ' + (sale.numFactura || saleId));
 }
-
-// ═══════════════════════════════════════════════════════════════
-// EDITAR Y ANULAR ABONOS
 // ═══════════════════════════════════════════════════════════════
 function abrirEditarAbono(abonoId) {
   const abono = (DB.abonos || []).find(a => a.id === abonoId);
@@ -8180,6 +8241,7 @@ function calcSaldoHasta(vendedorId, fechaCorte) {
 
   const saldo = {};
   movs.forEach(m => {
+    if (m.anulado) return; // ignorar movimientos anulados
     (m.productos || []).forEach(p => {
       if (!saldo[p.productId]) saldo[p.productId] = {
         productId: p.productId, nombre: p.nombre, unidad: p.unidad || '',
@@ -8213,6 +8275,7 @@ function calcSaldo(vendedorId) {
   });
   const saldo = {};
   movs.forEach(m => {
+    if (m.anulado) return; // ignorar movimientos anulados
     (m.productos || []).forEach(p => {
       if (!saldo[p.productId]) saldo[p.productId] = { productId: p.productId, nombre: p.nombre, unidad: p.unidad || '', traslado: 0, venta: 0, cambio: 0, cierreCambio: 0, ventaCambio: 0 };
       if (m.tipo === 'TRASLADO')      saldo[p.productId].traslado     += (p.qty || 0);
