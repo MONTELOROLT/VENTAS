@@ -1,0 +1,20 @@
+{
+  "name": "Monteloro Ventas",
+  "short_name": "Monteloro",
+  "description": "App de ventas Lácteos Tuluá",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f3460",
+  "theme_color": "#0f3460",
+  "orientation": "portrait",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox%3D%220 0 100 100%22%3E%3Crect width%3D%22100%22 height%3D%22100%22 rx%3D%2222%22 fill%3D%22%230f3460%22%2F%3E%3Cpolygon points%3D%2215%2C75 38%2C35 55%2C58 68%2C42 85%2C75%22 fill%3D%22none%22 stroke%3D%22%2374b9ff%22 stroke-width%3D%224%22 stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

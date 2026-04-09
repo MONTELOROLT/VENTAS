@@ -12,8 +12,8 @@
 <meta name="description" content="App de ventas Lácteos Tuluá">
 <title>Monteloro</title>
 
-<!-- PWA Manifest embebido -->
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22Monteloro%20Ventas%22%2C%20%22short_name%22%3A%20%22Monteloro%22%2C%20%22description%22%3A%20%22App%20de%20ventas%20L%C3%A1cteos%20Tulu%C3%A1%22%2C%20%22start_url%22%3A%20%22.%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%230f3460%22%2C%20%22theme_color%22%3A%20%22%230f3460%22%2C%20%22orientation%22%3A%20%22portrait%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2522http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2522%2520viewBox%253D%25220%25200%2520100%2520100%2522%253E%253Crect%2520width%253D%2522100%2522%2520height%253D%2522100%2522%2520rx%253D%252222%2522%2520fill%253D%2522%25230f3460%2522%252F%253E%253Cpolygon%2520points%253D%252215%252C75%252038%252C35%252055%252C58%252068%252C42%252085%252C75%2522%2520fill%253D%2522none%2522%2520stroke%253D%2522%252374b9ff%2522%2520stroke-width%253D%25224%2522%2520stroke-linejoin%253D%2522round%2522%2520stroke-linecap%253D%2522round%2522%252F%253E%253Cpolygon%2520points%253D%252215%252C75%252038%252C35%252055%252C58%252068%252C42%252085%252C75%2522%2520fill%253D%2522%25231a5fb4%2522%2520opacity%253D%25220.5%2522%252F%253E%253Cpolygon%2520points%253D%252238%252C35%252030%252C50%252046%252C50%2522%2520fill%253D%2522%2523c8e6ff%2522%2520opacity%253D%25220.85%2522%252F%253E%253Cellipse%2520cx%253D%252268%2522%2520cy%253D%252270%2522%2520rx%253D%25228%2522%2520ry%253D%25229%2522%2520fill%253D%2522%252374b9ff%2522%2520opacity%253D%25220.95%2522%252F%253E%253Cpolygon%2520points%253D%252268%252C54%252063%252C65%252073%252C65%2522%2520fill%253D%2522%252374b9ff%2522%2520opacity%253D%25220.95%2522%252F%253E%253Cellipse%2520cx%253D%252265%2522%2520cy%253D%252266%2522%2520rx%253D%25222%2522%2520ry%253D%25223%2522%2520fill%253D%2522white%2522%2520opacity%253D%25220.4%2522%252F%253E%253C%252Fsvg%253E%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+<!-- PWA Manifest -->
+<link rel="manifest" href="./manifest.json">
 
 <!-- Ícono para iOS (Apple Touch Icon) -->
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2222%22%20fill%3D%22%230f3460%22%2F%3E%3Cpolygon%20points%3D%2215%2C75%2038%2C35%2055%2C58%2068%2C42%2085%2C75%22%20fill%3D%22none%22%20stroke%3D%22%2374b9ff%22%20stroke-width%3D%224%22%20stroke-linejoin%3D%22round%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpolygon%20points%3D%2215%2C75%2038%2C35%2055%2C58%2068%2C42%2085%2C75%22%20fill%3D%22%231a5fb4%22%20opacity%3D%220.5%22%2F%3E%3Cpolygon%20points%3D%2238%2C35%2030%2C50%2046%2C50%22%20fill%3D%22%23c8e6ff%22%20opacity%3D%220.85%22%2F%3E%3Cellipse%20cx%3D%2268%22%20cy%3D%2270%22%20rx%3D%228%22%20ry%3D%229%22%20fill%3D%22%2374b9ff%22%20opacity%3D%220.95%22%2F%3E%3Cpolygon%20points%3D%2268%2C54%2063%2C65%2073%2C65%22%20fill%3D%22%2374b9ff%22%20opacity%3D%220.95%22%2F%3E%3Cellipse%20cx%3D%2265%22%20cy%3D%2266%22%20rx%3D%222%22%20ry%3D%223%22%20fill%3D%22white%22%20opacity%3D%220.4%22%2F%3E%3C%2Fsvg%3E">
@@ -826,7 +826,7 @@
   @media (min-width: 992px) {
     #app { display: none !important; }
     #login-screen { max-width: 420px; margin: 80px auto; border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
-    #desktop-app { display: flex !important; flex-direction: column; height: 100vh; background: #f0f2f5; font-family: 'DM Sans',sans-serif; }
+    #desktop-app.dt-visible { display: flex !important; flex-direction: column; height: 100vh; background: #f0f2f5; font-family: 'DM Sans',sans-serif; }
 
     /* Topbar */
     #dt-topbar { display:flex;align-items:center;justify-content:space-between;background:#0f3460;color:white;padding:0 28px;height:56px;flex-shrink:0;box-shadow:0 2px 14px rgba(0,0,0,0.28);z-index:100; }
@@ -992,7 +992,7 @@
           <button class="logout-btn" onclick="resetAppData()" style="background:rgba(255,100,50,0.25);margin-right:4px" title="Limpiar datos locales">🗑️</button>
           <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
             <button class="logout-btn" onclick="doLogout()">Salir</button>
-            <span style="font-size:0.5rem;color:rgba(255,255,255,0.4);letter-spacing:0.03em;font-weight:500;user-select:none">V-1.2.260318</span>
+            <span style="font-size:0.5rem;color:rgba(255,255,255,0.4);letter-spacing:0.03em;font-weight:500;user-select:none">V-1.3.260408</span>
           </div>
         </div>
       </div>
@@ -1338,6 +1338,25 @@
         <button class="inv-tab" onclick="invTab('traslados')" id="inv-tab-traslados">🚚 Traslados</button>
         <button class="inv-tab" onclick="invTab('cambios')">🔄 Cambios</button>
         <button class="inv-tab" onclick="invTab('movimientos')">📋 Movimientos</button>
+      </div>
+
+      <!-- Filtro de fechas compartido (todas las tabs) -->
+      <div style="background:#f0f4f8;border-radius:10px;padding:10px 12px;margin-bottom:12px">
+        <div style="font-size:0.72rem;font-weight:700;color:#555;margin-bottom:6px">📅 Filtrar por período</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="date" id="inv-mob-desde" class="form-input"
+            style="flex:1;min-width:120px;padding:7px 10px;font-size:0.82rem"
+            oninput="invRefreshTab()">
+          <span style="font-size:0.78rem;color:#aaa">→</span>
+          <input type="date" id="inv-mob-hasta" class="form-input"
+            style="flex:1;min-width:120px;padding:7px 10px;font-size:0.82rem"
+            oninput="invRefreshTab()">
+          <button onclick="document.getElementById('inv-mob-desde').value='';document.getElementById('inv-mob-hasta').value='';invRefreshTab()"
+            style="padding:7px 12px;border:1px solid #dee2e6;background:white;border-radius:8px;font-size:0.78rem;color:#666;cursor:pointer;white-space:nowrap">
+            ✕ Limpiar
+          </button>
+        </div>
+        <div id="inv-mob-periodo-label" style="font-size:0.72rem;color:#1a3a8f;font-weight:600;margin-top:4px;display:none"></div>
       </div>
 
       <!-- PANEL SALDOS -->
@@ -2066,26 +2085,7 @@
 <script>
 // ── Service Worker (cache offline) ──
 if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE = 'monteloro-v1.3.260330';
-    self.addEventListener('install', e => {
-      self.skipWaiting();
-    });
-    self.addEventListener('activate', e => {
-      e.waitUntil(clients.claim());
-    });
-    self.addEventListener('fetch', e => {
-      // Solo cachear requests del mismo origen
-      if (e.request.url.startsWith(self.location.origin)) {
-        e.respondWith(
-          caches.match(e.request).then(cached => cached || fetch(e.request))
-        );
-      }
-    });
-  `;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(() => {});
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
 // ── Banner de instalación ──
@@ -2239,7 +2239,7 @@ function cerrarBannerPWA() {
       <img id="dt-topbar-logo" src="" alt="Monteloro">
       <div>
         <div id="dt-topbar-brand">Monteloro</div>
-        <div id="dt-version" style="font-size:0.58rem;color:rgba(255,255,255,0.35)">V-1.3.260330</div>
+        <div id="dt-version" style="font-size:0.58rem;color:rgba(255,255,255,0.35)">V-1.3.260408</div>
       </div>
     </div>
     <div id="dt-topbar-right">
@@ -2365,26 +2365,39 @@ function normalizarFechaISO(val) {
   if (!val) return val;
   const s = String(val).trim();
 
-  // Caso 1: ISO limpio "2026-03-06T14:30:00" — ya funciona
-  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)) return s;
+  // Sanitizar año: si el año es > año actual + 2, probablemente es error de digitación
+  // Ej: 3026 → 2026 (resta 1000), 2126 → 2026 (resta 100)
+  function sanitizarAnio(y) {
+    const anioActual = new Date().getFullYear();
+    let n = parseInt(y, 10);
+    if (n > anioActual + 2) {
+      if (n > 3000) n -= 1000;       // 3026 → 2026
+      else if (n > 2100) n -= 100;   // 2126 → 2026
+      else n = anioActual;            // cualquier otro caso raro
+    }
+    return String(n);
+  }
+
+  // Caso 1: ISO limpio "2026-03-06T14:30:00" — aplicar solo sanitización de año
+  const mISO = s.match(/^(\d{4})-(\d{2}-\d{2}T\d{2}:\d{2}.*)/);
+  if (mISO) return sanitizarAnio(mISO[1]) + '-' + mISO[2];
 
   // Caso 2: Formato roto de Sheets "2026-03-06TSat D:00" o "2026-03-06TWed 14:30"
-  // Extraer solo la parte YYYY-MM-DD
-  const mRoto = s.match(/^(\d{4}-\d{2}-\d{2})T/);
-  if (mRoto) return mRoto[1] + 'T00:00:00';
+  const mRoto = s.match(/^(\d{4})-(\d{2}-\d{2})T/);
+  if (mRoto) return sanitizarAnio(mRoto[1]) + '-' + mRoto[2] + 'T00:00:00';
 
   // Caso 3: Sheets M/D/YYYY HH:mm:ss  (mes/dia/año)
   const mUS = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[\s,]+(\d{1,2}:\d{2}(?::\d{2})?)/);
   if (mUS) {
     const [_, mo, d, y, time] = mUS;
-    return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}T${time}`;
+    return `${sanitizarAnio(y)}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}T${time}`;
   }
 
   // Caso 4: DD/MM/YYYY
   const mCO = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if (mCO) {
     const [_, d, mo, y] = mCO;
-    return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}T00:00:00`;
+    return `${sanitizarAnio(y)}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}T00:00:00`;
   }
 
   return val;
@@ -2616,7 +2629,9 @@ function doLogin() {
 function doLogout() {
   if (!confirm('¿Cerrar sesión?')) return;
   currentUser = null;
+  if (window._autoSyncInterval) { clearInterval(window._autoSyncInterval); window._autoSyncInterval = null; }
   document.getElementById('app').classList.remove('visible');
+  document.getElementById('desktop-app').classList.remove('dt-visible');
   showLoginScreen();
 }
 
@@ -2631,6 +2646,7 @@ function resetAppData() {
 
 function startApp() {
   document.getElementById('app').classList.add('visible');
+  document.getElementById('desktop-app').classList.add('dt-visible');
   const nombre = currentUser ? currentUser.nombre : (DB.config.sellerName || 'Vendedor');
   document.getElementById('seller-display').textContent = nombre;
   // Avatar con iniciales
@@ -2697,6 +2713,16 @@ function startApp() {
   setSyncState(navigator.onLine ? 'ok' : 'offline');
   // Inicializar vista desktop si aplica
   setTimeout(() => { if (isDesktop()) dtInit(); }, 100);
+
+  // Auto-sync periódico en PC (cada 2 minutos, silencioso)
+  if (isDesktop()) {
+    if (window._autoSyncInterval) clearInterval(window._autoSyncInterval);
+    window._autoSyncInterval = setInterval(() => {
+      if (currentUser && navigator.onLine && DB.config.appsScriptUrl) {
+        syncFromSheets(false).catch(() => {});
+      }
+    }, 2 * 60 * 1000); // 2 minutos
+  }
 }
 function showScreen(name) {
   if (!currentUser) { showToast('Debes iniciar sesión'); return; }
@@ -3444,8 +3470,6 @@ function aplicarDescuentoGlobal() {
   renderCart();
 }
 
-function applyDescuentoGlobal() {}  // legacy — ya no se usa
-function applyDescuentoValor()  {}  // legacy — ya no se usa
 
 function updateTotal() {
   const subtotalBruto  = currentSale.items.reduce((a, b) => a + b.qty * b.price, 0);
@@ -4299,18 +4323,24 @@ function calcSaldoVenta(ventaId, totalVenta) {
 
   const total = parseFloat(venta.total) || 0;
 
+  // Retenciones aplicadas (descuentan del total a cobrar)
+  const totalRetenciones = parseFloat(venta.totalRetenciones) || 0;
+
+  // Base real a cobrar = total bruto - retenciones
+  const baseNeta = Math.max(0, total - totalRetenciones);
+
   // Abono inicial registrado al momento de crear la venta (campo fijo, nunca cambia)
   const abonoInicial = venta.tipoPago === 'CREDITO'
     ? (parseFloat(venta.abonoInicial) || parseFloat(venta.abono) || 0)
-    : (parseFloat(venta.total) || 0);
+    : baseNeta;
 
   // Suma de abonos posteriores registrados en DB.abonos
   const sumaAbonos = (DB.abonos || [])
-    .filter(a => a.ventaId === ventaId)
+    .filter(a => a.ventaId === ventaId && !a.anulado)
     .reduce((s, a) => s + (parseFloat(a.monto) || 0), 0);
 
-  // Saldo inicial = total menos abono inicial de la venta
-  const saldoInicial = Math.max(0, total - abonoInicial);
+  // Saldo inicial = base neta menos abono inicial
+  const saldoInicial = Math.max(0, baseNeta - abonoInicial);
 
   // Saldo actual = saldo inicial menos todos los abonos posteriores
   const saldoActual = Math.max(0, saldoInicial - sumaAbonos);
@@ -4733,11 +4763,13 @@ function renderInfCartera() {
 
 // ── Saldo de venta hasta una fecha de corte ──────────────────
 function calcSaldoVentaHasta(venta, fechaCorte) {
-  const total        = parseFloat(venta.total) || 0;
+  const total             = parseFloat(venta.total) || 0;
+  const totalRetenciones  = parseFloat(venta.totalRetenciones) || 0;
+  const baseNeta          = Math.max(0, total - totalRetenciones);
   // Abono inicial: cuánto pagó al momento de crear la venta
   const abonoInicial = parseFloat(venta.abonoInicial) || parseFloat(venta.abono) || 0;
-  // Saldo pendiente después del abono inicial
-  const saldoInicial = Math.max(0, total - abonoInicial);
+  // Saldo pendiente después del abono inicial (sobre base neta)
+  const saldoInicial = Math.max(0, baseNeta - abonoInicial);
 
   // Abonos posteriores registrados HASTA la fecha de corte
   const sumaAbonos = (DB.abonos || [])
@@ -5042,8 +5074,16 @@ function renderInfProductos() {
 
 // ── Informe de Inventario ──────────────────────────────────────
 function renderInfInventario() {
-  const { hasta, rutaId } = infGetFiltros();
-  const fechaCorte = hasta || new Date().toISOString().split('T')[0];
+  const { desde, hasta, rutaId } = infGetFiltros();
+  const fechaFinal  = hasta || new Date().toISOString().split('T')[0];
+  const tienePeriodo = !!desde;
+
+  // Fecha un día antes de "desde" para calcular saldo inicial
+  const fechaAntes = tienePeriodo ? (() => {
+    const d = new Date(desde + 'T12:00:00');
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split('T')[0];
+  })() : '';
 
   const rutas = rutaId
     ? (DB.rutas || []).filter(r => r.id === rutaId)
@@ -5053,7 +5093,9 @@ function renderInfInventario() {
 
   let html = `<div style="background:#fff3cd;border-radius:10px;padding:8px 14px;margin-bottom:14px;
     font-size:0.78rem;color:#856404;text-align:center">
-    📅 Saldo al <strong>${fechaCorte}</strong>
+    📅 ${tienePeriodo
+      ? `Período: <strong>${desde}</strong> al <strong>${fechaFinal}</strong>`
+      : `Saldo al <strong>${fechaFinal}</strong>`}
   </div>
   <button onclick="exportarInventarioExcel()"
     style="width:100%;padding:14px;background:#1d6f42;color:white;border:none;border-radius:12px;
@@ -5062,29 +5104,97 @@ function renderInfInventario() {
     📥 Exportar inventario a Excel
   </button>`;
 
-  let hayDatos = false;
+  let hayDatos      = false;
+  let totalGlobal   = 0;
+  let totalProductos = 0;
+
   rutas.forEach(ruta => {
     const vendedorIds = getVendedorIdsDeRuta(ruta);
     const vendNombres = vendedorIds.length
       ? vendedorIds.map(vid => { const u = (DB.usuarios||[]).find(u => u.id == vid); return u ? u.nombre : vid; }).join(', ')
       : 'Sin vendedor asignado';
-    // Para inventario usamos el primer vendedor (el saldo se calcula por vendedorId individual)
-    const saldo = calcSaldoHasta(vendedorIds[0] || '', fechaCorte);
-    const prods = Object.values(saldo).filter(p => p.traslado > 0 || p.disponible !== 0);
+
+    const vendId = vendedorIds[0] || '';
+
+    // Saldo final (al "hasta")
+    const sfinal = calcSaldoHasta(vendId, fechaFinal);
+    // Saldo inicial (día antes de "desde") — solo si hay filtro de período
+    const sinicial = (tienePeriodo && fechaAntes) ? calcSaldoHasta(vendId, fechaAntes) : {};
+
+    // Unir todos los productos de ambos períodos
+    const allPids = new Set([...Object.keys(sfinal), ...Object.keys(sinicial)]);
+    const prods = [];
+
+    allPids.forEach(pid => {
+      const sf = sfinal[pid]   || { traslado:0, venta:0, cambio:0, disponible:0, nombre:'', unidad:'' };
+      const si = sinicial[pid] || { traslado:0, venta:0, cambio:0, disponible:0 };
+      if (sf.traslado === 0 && sf.disponible === 0 && si.disponible === 0) return;
+
+      prods.push({
+        productId:    pid,
+        nombre:       sf.nombre || si.nombre || pid,
+        unidad:       sf.unidad || si.unidad || '',
+        // Totales acumulados (para vista sin período)
+        traslado:     sf.traslado,
+        venta:        sf.venta,
+        cambio:       sf.cambio,
+        disponible:   sf.disponible,
+        // Valores del período
+        dispInicial:   si.disponible || 0,
+        traslPeriodo:  sf.traslado  - (si.traslado  || 0),
+        ventPeriodo:   sf.venta     - (si.venta     || 0),
+        cambioPeriodo: sf.cambio    - (si.cambio    || 0),
+        dispFinal:     sf.disponible || 0
+      });
+    });
+
     if (!prods.length) return;
     hayDatos = true;
 
+    const rutaTotal = prods.reduce((s, p) => s + (tienePeriodo ? p.dispFinal : p.disponible), 0);
+    totalGlobal  += rutaTotal;
+    totalProductos += prods.length;
+
     const rows = prods.sort((a,b) => b.traslado - a.traslado).map(p => {
-      const ok = p.disponible >= 0;
-      return `<div class="inf-row">
-        <div class="inf-row-label">
-          ${p.nombre}
-          <div class="inf-row-sub">${p.unidad} · 🚚 ${p.traslado} tral · 🛒 ${p.venta} vta · 🔄 ${p.cambio} camb</div>
-        </div>
-        <div style="text-align:right;flex-shrink:0;margin-left:12px">
-          <div class="inf-row-val ${ok ? 'green' : 'red'}">${p.disponible} disp.</div>
-        </div>
-      </div>`;
+      const saldo = tienePeriodo ? p.dispFinal : p.disponible;
+      const ok    = saldo >= 0;
+
+      if (tienePeriodo) {
+        return `<div class="inf-row" style="flex-wrap:wrap;gap:6px">
+          <div class="inf-row-label" style="min-width:140px">
+            ${p.nombre}
+            <div class="inf-row-sub">${p.unidad}</div>
+          </div>
+          <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:flex-end;flex:1">
+            <span title="Saldo inicial" style="font-size:0.72rem;background:#e8f4f8;color:#1a3a8f;padding:3px 8px;border-radius:6px;white-space:nowrap">
+              Ini: <strong>${p.dispInicial}</strong>
+            </span>
+            <span title="Traslados en el período" style="font-size:0.72rem;background:#e8f9ef;color:#1d6f42;padding:3px 8px;border-radius:6px;white-space:nowrap">
+              🚚 +${p.traslPeriodo}
+            </span>
+            <span title="Ventas en el período" style="font-size:0.72rem;background:#fdecea;color:#c0392b;padding:3px 8px;border-radius:6px;white-space:nowrap">
+              🛒 -${p.ventPeriodo}
+            </span>
+            ${p.cambioPeriodo > 0 ? `<span title="Cambios en el período" style="font-size:0.72rem;background:#fff3e0;color:#856404;padding:3px 8px;border-radius:6px;white-space:nowrap">
+              🔄 -${p.cambioPeriodo}
+            </span>` : ''}
+            <span style="font-size:0.88rem;font-weight:800;font-family:Syne,sans-serif;
+                         color:${ok?'#27ae60':'#c0392b'};min-width:56px;text-align:right;white-space:nowrap">
+              ${p.dispFinal} <span style="font-size:0.68rem;font-weight:400">disp.</span>
+            </span>
+          </div>
+        </div>`;
+      } else {
+        return `<div class="inf-row">
+          <div class="inf-row-label">
+            ${p.nombre}
+            <div class="inf-row-sub">${p.unidad} · 🚚 ${p.traslado} tral · 🛒 ${p.venta} vta · 🔄 ${p.cambio} camb</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;margin-left:12px">
+            <div class="inf-row-val ${ok ? 'green' : 'red'}">${p.disponible} disp.</div>
+          </div>
+        </div>`;
+      }
     }).join('');
 
     html += `<div class="inf-card">
@@ -5093,19 +5203,46 @@ function renderInfInventario() {
           <div class="inf-card-title">🗺 ${ruta.nombre}</div>
           <div style="font-size:0.7rem;color:var(--ink-muted)">${vendedorIds.length ? '👤 ' + vendNombres : 'Sin vendedor asignado'}</div>
         </div>
-        <div style="font-size:0.72rem;color:var(--ink-muted)">${prods.length} prod.</div>
+        <div style="text-align:right">
+          <div style="font-size:0.72rem;color:var(--ink-muted)">${prods.length} prod.</div>
+          <div style="font-size:0.82rem;font-weight:700;color:${rutaTotal>=0?'#27ae60':'#c0392b'};margin-top:2px">
+            ${rutaTotal} unid.
+          </div>
+        </div>
       </div>
       <div class="inf-card-body">${rows}</div>
     </div>`;
   });
 
-  return hayDatos ? html : html + '<div class="inf-empty">📭 Sin movimientos hasta ' + fechaCorte + '</div>';
+  // Totalizador global al final
+  if (hayDatos) {
+    html += `<div style="background:#0f3460;border-radius:12px;padding:14px 18px;margin-top:6px;
+               display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-family:Syne,sans-serif;font-size:0.88rem;font-weight:700;color:white">📦 Total inventario disponible</div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);margin-top:1px">${totalProductos} producto(s) · ${rutas.length} ruta(s)</div>
+      </div>
+      <div style="font-family:Syne,sans-serif;font-size:1.4rem;font-weight:800;
+                  color:${totalGlobal>=0?'#a8e6cf':'#ffd6d6'}">${totalGlobal} <span style="font-size:0.9rem;font-weight:400">unidades</span>
+      </div>
+    </div>`;
+  }
+
+  return hayDatos ? html : html + '<div class="inf-empty">📭 Sin movimientos hasta ' + fechaFinal + '</div>';
 }
 
 // ── Exportar Inventario a Excel ────────────────────────────────
 function exportarInventarioExcel() {
-  const { hasta, rutaId } = infGetFiltros();
-  const fechaCorte = hasta || new Date().toISOString().split('T')[0];
+  const { desde, hasta, rutaId } = infGetFiltros();
+  const fechaFinal   = hasta || new Date().toISOString().split('T')[0];
+  const tienePeriodo = !!desde;
+
+  // Fecha un día antes de "desde" para calcular saldo inicial
+  const fechaAntes = tienePeriodo ? (() => {
+    const d = new Date(desde + 'T12:00:00');
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split('T')[0];
+  })() : '';
 
   const rutas = rutaId
     ? (DB.rutas || []).filter(r => r.id === rutaId)
@@ -5114,36 +5251,69 @@ function exportarInventarioExcel() {
   if (!rutas.length) { showToast('⚠️ Sin rutas configuradas'); return; }
 
   const rows = [];
+  let totalSaldoInicial = 0, totalEntradas = 0, totalVentas = 0,
+      totalCambios = 0, totalCierreCambios = 0, totalSaldoFinal = 0;
+
   rutas.forEach(ruta => {
     const vendedorIds = getVendedorIdsDeRuta(ruta);
-    const vendNom = vendedorIds.map(vid => { const u = (DB.usuarios||[]).find(u => u.id == vid); return u ? u.nombre : vid; }).join(', ') || 'Sin vendedor';
-    // Calcular saldo usando el primer vendedorId (el inventario es por vendedor)
-    const saldo = calcSaldoHasta(vendedorIds[0] || '', fechaCorte);
-    const prods = Object.values(saldo)
-      .filter(p => p.traslado > 0 || p.disponible !== 0)
-      .sort((a,b) => a.nombre.localeCompare(b.nombre));
+    const vendNom = vendedorIds.map(vid => {
+      const u = (DB.usuarios||[]).find(u => u.id == vid);
+      return u ? u.nombre : vid;
+    }).join(', ') || 'Sin vendedor';
 
-    prods.forEach(p => {
+    const vendId = vendedorIds[0] || '';
+
+    // Saldo final al "hasta"
+    const sfinal   = calcSaldoHasta(vendId, fechaFinal);
+    // Saldo inicial (día antes de "desde") — vacío si no hay filtro de período
+    const sinicial = (tienePeriodo && fechaAntes) ? calcSaldoHasta(vendId, fechaAntes) : {};
+
+    // Unir todos los productos
+    const allPids = new Set([...Object.keys(sfinal), ...Object.keys(sinicial)]);
+
+    [...allPids].forEach(pid => {
+      const sf = sfinal[pid]   || { traslado:0, venta:0, cambio:0, cierreCambio:0, disponible:0, nombre:'', unidad:'' };
+      const si = sinicial[pid] || { traslado:0, venta:0, cambio:0, cierreCambio:0, disponible:0 };
+      if (sf.traslado === 0 && sf.disponible === 0 && si.disponible === 0) return;
+
+      const saldoInicial    = si.disponible    || 0;
+      const entradas        = sf.traslado      - (si.traslado      || 0);
+      const ventas          = sf.venta         - (si.venta         || 0);
+      const cambios         = sf.cambio        - (si.cambio        || 0);
+      const cierreCambios   = sf.cierreCambio  - (si.cierreCambio  || 0);
+      const saldoFinal      = sf.disponible    || 0;
+
+      totalSaldoInicial  += saldoInicial;
+      totalEntradas      += entradas;
+      totalVentas        += ventas;
+      totalCambios       += cambios;
+      totalCierreCambios += cierreCambios;
+      totalSaldoFinal    += saldoFinal;
+
       rows.push([
-        ruta.nombre,   // Ruta
-        vendNom,       // Vendedor(es)
-        p.productId || '',                     // ID Producto
-        p.nombre || '',                        // Producto
-        p.unidad || '',                        // Unidad
-        p.traslado || 0,                       // Entradas (traslados)
-        p.venta || 0,                          // Ventas
-        p.cambio || 0,                         // Cambios
-        p.cierreCambio || 0,                   // Cierre cambios
-        p.disponible || 0                      // Saldo disponible
+        ruta.nombre,
+        vendNom,
+        sf.productId || pid,
+        sf.nombre || si.nombre || pid,
+        sf.unidad || si.unidad || '',
+        tienePeriodo ? saldoInicial  : '',          // Saldo Inicial
+        tienePeriodo ? entradas      : sf.traslado, // Entradas / Traslados
+        tienePeriodo ? ventas        : sf.venta,    // Ventas
+        tienePeriodo ? cambios       : sf.cambio,   // Cambios
+        tienePeriodo ? cierreCambios : sf.cierreCambio, // Cierre Cambios
+        saldoFinal                                  // Saldo Final
       ]);
     });
   });
 
-  if (!rows.length) { showToast('⚠️ Sin movimientos de inventario hasta ' + fechaCorte); return; }
+  if (!rows.length) { showToast('⚠️ Sin movimientos de inventario hasta ' + fechaFinal); return; }
+
+  // Ordenar por ruta y nombre de producto
+  rows.sort((a, b) => (a[0] + a[3]).localeCompare(b[0] + b[3]));
 
   const headers = [
     'Ruta', 'Vendedor', 'ID Producto', 'Producto', 'Unidad',
-    'Entradas', 'Ventas', 'Cambios', 'Cierre Cambios', 'Saldo Disponible'
+    'Saldo Inicial', 'Entradas', 'Ventas', 'Cambios', 'Cierre Cambios', 'Saldo Final'
   ];
 
   const sep = ';';
@@ -5157,21 +5327,39 @@ function exportarInventarioExcel() {
     ? ((DB.rutas||[]).find(r => r.id === rutaId)||{}).nombre || 'ruta'
     : 'todas-rutas';
 
+  const periodoLabel = tienePeriodo
+    ? 'Período: ' + desde + ' al ' + fechaFinal
+    : 'Fecha de corte: ' + fechaFinal;
+
+  // Fila de totales
+  const totalesRow = [
+    'TOTAL GENERAL', '', '', '', '',
+    tienePeriodo ? totalSaldoInicial  : '',
+    tienePeriodo ? totalEntradas      : '',
+    tienePeriodo ? totalVentas        : '',
+    tienePeriodo ? totalCambios       : '',
+    tienePeriodo ? totalCierreCambios : '',
+    totalSaldoFinal
+  ];
+
   const lines = [
     esc('INFORME DE INVENTARIO — MONTELORO') + sep.repeat(headers.length - 1),
-    esc('Fecha de corte: ' + fechaCorte) + sep + esc('Ruta: ' + (rutaId ? rutaNombre : 'Todas')) + sep.repeat(headers.length - 2),
+    esc(periodoLabel) + sep + esc('Ruta: ' + (rutaId ? rutaNombre : 'Todas')) + sep.repeat(headers.length - 2),
     esc('Generado: ' + new Date().toLocaleDateString('es-CO')) + sep.repeat(headers.length - 1),
     '',
     headers.map(esc).join(sep),
-    ...rows.map(row => row.map(esc).join(sep))
+    ...rows.map(row => row.map(esc).join(sep)),
+    '',
+    totalesRow.map(esc).join(sep)
   ];
 
-  const BOM = '﻿';
+  const BOM = '\uFEFF';
   const blob = new Blob([BOM + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href = url;
-  a.download = 'inventario_' + rutaNombre.replace(/\s+/g, '_') + '_corte_' + fechaCorte + '.csv';
+  const sufijo = tienePeriodo ? desde + '_al_' + fechaFinal : 'corte_' + fechaFinal;
+  a.download = 'inventario_' + rutaNombre.replace(/\s+/g, '_') + '_' + sufijo + '.csv';
   a.click();
   URL.revokeObjectURL(url);
   showToast('✅ Inventario exportado — ' + rows.length + ' producto(s)');
@@ -5837,7 +6025,7 @@ function applyHistFilters() {
     return;
   }
 
-  const totalAcum = list.reduce((a, b) => a + b.total, 0);
+  const totalAcum = list.filter(s => !s.anulada).reduce((a, b) => a + b.total, 0);
   summaryEl.innerHTML = `
     <div class="hist-summary">
       <div class="hist-summary-left">
@@ -5860,20 +6048,22 @@ function applyHistFilters() {
 
     let html = '';
     Object.entries(porVendedor).forEach(([vid, vdata], vi) => {
-      const totalV  = vdata.ventas.reduce((a, b) => a + b.total, 0);
+      const totalV  = vdata.ventas.filter(s=>!s.anulada).reduce((a, b) => a + b.total, 0);
       const blockId = 'vend-block-' + vi;
 
       // Agrupar por día dentro del vendedor
       const porDia = {};
       vdata.ventas.forEach(s => {
-        const dia = parseFecha(s.fecha).toLocaleDateString('es', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-        if (!porDia[dia]) porDia[dia] = [];
-        porDia[dia].push(s);
+        const f = parseFecha(s.fecha);
+        const key = isNaN(f) ? '9999-12-31' : f.toISOString().slice(0,10); // clave ordenable
+        if (!porDia[key]) porDia[key] = { label: isNaN(f) ? 'Fecha inválida' : f.toLocaleDateString('es', { weekday:'long', year:'numeric', month:'long', day:'numeric' }), ventas: [] };
+        porDia[key].ventas.push(s);
       });
 
       let diasHtml = '';
-      Object.entries(porDia).forEach(([dia, ventas], di) => {
-        const totalDia = ventas.reduce((a, b) => a + b.total, 0);
+      Object.keys(porDia).sort().reverse().forEach((key, di) => {
+        const { label: dia, ventas } = porDia[key];
+        const totalDia = ventas.filter(s=>!s.anulada).reduce((a, b) => a + b.total, 0);
         const diaId    = blockId + '-dia-' + di;
         diasHtml += `
           <div style="margin:0 0 6px 0">
@@ -5921,14 +6111,16 @@ function applyHistFilters() {
     // ── VISTA VENDEDOR (o admin filtrado por 1 vendedor): Día → Ventas ──
     const porDia = {};
     list.forEach(s => {
-      const dia = parseFecha(s.fecha).toLocaleDateString('es', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-      if (!porDia[dia]) porDia[dia] = [];
-      porDia[dia].push(s);
+      const f = parseFecha(s.fecha);
+      const key = isNaN(f) ? '9999-12-31' : f.toISOString().slice(0,10);
+      if (!porDia[key]) porDia[key] = { label: isNaN(f) ? 'Fecha inválida' : f.toLocaleDateString('es', { weekday:'long', year:'numeric', month:'long', day:'numeric' }), ventas: [] };
+      porDia[key].ventas.push(s);
     });
 
     let html = '';
-    Object.entries(porDia).forEach(([dia, ventas], di) => {
-      const totalDia = ventas.reduce((a, b) => a + b.total, 0);
+    Object.keys(porDia).sort().reverse().forEach((key, di) => {
+      const { label: dia, ventas } = porDia[key];
+      const totalDia = ventas.filter(s=>!s.anulada).reduce((a, b) => a + b.total, 0);
       const diaId    = 'dia-block-' + di;
       html += `
         <div style="margin-bottom:10px;border:2px solid var(--border);border-radius:12px;overflow:hidden">
@@ -6994,7 +7186,8 @@ function deleteUsuario(id) {
 const SYNC_QUEUE_KEY = 'ventaruta_sync_queue';
 let _syncRetryTimer = null;
 let _syncWorking = false;
-const RETRY_DELAYS = [15000, 30000, 60000, 120000]; // 15s, 30s, 1min, 2min
+const RETRY_DELAYS = [10000, 20000, 45000, 90000]; // 10s, 20s, 45s, 90s (más rápido)
+const SYNC_BATCH_SIZE = 6; // Ops en paralelo por ronda
 
 // ── Guardar operación en cola persistente ──
 function queueOperation(type, data) {
@@ -7125,10 +7318,26 @@ async function flushQueueOp(op) {
   }
 }
 
-// ── Procesar toda la cola ──
+// ── Verificar conectividad real (no solo navigator.onLine) ──
+async function hayConexionReal() {
+  if (!navigator.onLine) return false;
+  try {
+    const url = DB.config.appsScriptUrl || localStorage.getItem('ventaruta_url');
+    if (!url) return navigator.onLine;
+    // HEAD rápido para confirmar que Apps Script responde
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 4000);
+    const r = await fetch(url + '?action=ping&t=' + Date.now(), { signal: ctrl.signal, mode: 'no-cors' });
+    return true; // no-cors siempre da opaque response, si no lanza excepción = hay red
+  } catch(e) {
+    return false;
+  }
+}
+
+// ── Procesar cola en LOTES PARALELOS (más rápido que secuencial) ──
 async function processSyncQueue() {
   if (_syncWorking) return;
-  if (!navigator.onLine) { setSyncState('offline'); scheduleRetry(); return; }
+
   const url = DB.config.appsScriptUrl || localStorage.getItem('ventaruta_url');
   if (!url) return;
   if (!DB.config.appsScriptUrl) DB.config.appsScriptUrl = url;
@@ -7136,33 +7345,50 @@ async function processSyncQueue() {
   const queue = getSyncQueue();
   if (!queue.length) { setSyncState('ok'); return; }
 
+  // Verificación rápida de conexión
+  if (!navigator.onLine) { setSyncState('offline'); scheduleRetry(); return; }
+
   _syncWorking = true;
   setSyncState('syncing');
 
   let enviados = 0;
   let fallidos = 0;
 
-  for (const op of queue) {
-    const ok = await flushQueueOp(op);
-    if (ok) {
-      removeFromQueue(op.id);
-      enviados++;
-    } else {
-      // Incrementar intentos
-      const queue2 = getSyncQueue();
-      const idx = queue2.findIndex(o => o.id === op.id);
-      if (idx !== -1) {
-        queue2[idx].attempts++;
-        queue2[idx].lastError = new Date().toISOString();
-        // Descartar si superó 10 intentos (más de 2 días de reintentos)
-        if (queue2[idx].attempts >= 10) {
-          queue2.splice(idx, 1);
-          console.warn('[SyncQueue] Operación descartada tras 10 intentos:', op.type, op.id);
+  // Procesar en lotes paralelos de SYNC_BATCH_SIZE
+  const queueSnapshot = [...queue]; // snapshot para iterar sin modificar mid-loop
+  for (let i = 0; i < queueSnapshot.length; i += SYNC_BATCH_SIZE) {
+    const lote = queueSnapshot.slice(i, i + SYNC_BATCH_SIZE);
+
+    // Enviar el lote en paralelo
+    const resultados = await Promise.all(lote.map(op => flushQueueOp(op)));
+
+    // Procesar resultados del lote
+    const queue2 = getSyncQueue(); // releer (puede haber cambiado)
+    resultados.forEach((ok, j) => {
+      const op = lote[j];
+      if (ok) {
+        // Quitar de la cola — sin releer en cada iteración
+        const idx2 = queue2.findIndex(o => o.id === op.id);
+        if (idx2 !== -1) queue2.splice(idx2, 1);
+        enviados++;
+      } else {
+        const idx2 = queue2.findIndex(o => o.id === op.id);
+        if (idx2 !== -1) {
+          queue2[idx2].attempts = (queue2[idx2].attempts || 0) + 1;
+          queue2[idx2].lastError = new Date().toISOString();
+          if (queue2[idx2].attempts >= 12) {
+            console.warn('[SyncQueue] Descartada tras 12 intentos:', op.type, op.id);
+            queue2.splice(idx2, 1);
+          }
         }
-        saveSyncQueue(queue2);
+        fallidos++;
       }
-      fallidos++;
-    }
+    });
+    saveSyncQueue(queue2);
+    updateSyncBadge();
+
+    // Si falló todo el lote, probablemente no hay conexión — detener
+    if (resultados.every(r => !r)) break;
   }
 
   _syncWorking = false;
@@ -7194,13 +7420,22 @@ function scheduleRetry() {
 window.addEventListener('online', () => {
   _retryCount = 0;
   if (_syncRetryTimer) { clearTimeout(_syncRetryTimer); _syncRetryTimer = null; }
-  showToast('📶 Conexión restaurada — sincronizando...');
-  processSyncQueue();
+  const pending = getSyncQueue().length;
+  if (pending > 0) {
+    showToast('📶 Conexión restaurada — enviando ' + pending + ' operación(es) pendiente(s)...');
+  } else {
+    showToast('📶 Conexión restaurada');
+  }
+  // Pequeña pausa para que la red se estabilice antes de intentar
+  setTimeout(() => processSyncQueue(), 1500);
 });
 
 window.addEventListener('offline', () => {
   setSyncState('offline');
-  showToast('📵 Sin conexión — los cambios se guardan localmente');
+  const pending = getSyncQueue().length;
+  showToast(pending > 0
+    ? '📵 Sin conexión — ' + pending + ' cambio(s) guardado(s) localmente'
+    : '📵 Sin conexión — los cambios se guardan localmente');
 });
 
 // ── API pública: encolar Y enviar ──
@@ -7257,8 +7492,8 @@ async function syncFromSheets(showFeedback = false) {
   }
   if (!DB.config.appsScriptUrl) return;
 
-  // Helper fetch con timeout de 15 segundos
-  const fetchConTimeout = (url, ms = 15000) => {
+  // Helper fetch con timeout configurable (30s para Sheets que puede ser lento)
+  const fetchConTimeout = (url, ms = 30000) => {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), ms);
     return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(timer));
@@ -7267,15 +7502,19 @@ async function syncFromSheets(showFeedback = false) {
   setSyncState('syncing');
   try {
     // ── 0. Vaciar cola pendiente ANTES de leer (para que Sheets tenga los últimos datos)
-    if (getSyncQueue().length > 0) {
+    const habiaPendientes = getSyncQueue().length > 0;
+    if (habiaPendientes) {
       await processSyncQueue();
-      // Esperar un poco para que Sheets procese las escrituras
-      await new Promise(r => setTimeout(r, 800));
+      // Solo esperar si aún quedan pendientes sin enviar (Sheets necesita procesar)
+      // Reducido de 800ms → 350ms (suficiente para que Apps Script confirme escritura)
+      if (getSyncQueue().length === 0) {
+        await new Promise(r => setTimeout(r, 350));
+      }
     }
 
     // ── 1. Leer catálogo completo desde Sheets
     const urlAll = `${DB.config.appsScriptUrl}?action=getAll&t=${Date.now()}`;
-    const resAll = await fetchConTimeout(urlAll);
+    const resAll = await fetchConTimeout(urlAll, 30000);
     const dataAll = await resAll.json();
 
     // ── Fusionar clientes: Sheets es fuente de verdad (incluso para borrados)
@@ -7461,7 +7700,7 @@ async function syncFromSheets(showFeedback = false) {
 
     // ── 2. Leer ventas (endpoint separado)
     const urlSales = `${DB.config.appsScriptUrl}?action=getSales&t=${Date.now()}`;
-    const resSales = await fetchConTimeout(urlSales);
+    const resSales = await fetchConTimeout(urlSales, 30000);
     const dataSales = await resSales.json();
     if (dataSales.sales) {
       if (dataSales.sales.length) {
@@ -7474,6 +7713,10 @@ async function syncFromSheets(showFeedback = false) {
         const localMap = {};
         (DB.sales || []).forEach(s => { localMap[s.id] = s; });
 
+        const pendingSaleIds = new Set(
+          getSyncQueue().filter(op => op.type === 'Sale' || op.type === 'saveSale').map(op => op.data && op.data.id).filter(Boolean)
+        );
+
         dataSales.sales.forEach(s => {
           const local = localMap[s.id];
           if (local) {
@@ -7482,20 +7725,30 @@ async function syncFromSheets(showFeedback = false) {
             // abonoInicial: valor fijo al momento de la venta, nunca cambia
             if (local.abonoInicial != null)               s.abonoInicial   = local.abonoInicial;
             else                                          s.abonoInicial   = local.abono != null ? local.abono : s.abono;
-            // saldoPorPagar: siempre preferir el local (ya refleja abonos registrados)
-            // Sheets puede tener el valor original antes de abonos
-            if (local.saldoPorPagar != null)              s.saldoPorPagar  = local.saldoPorPagar;
-            else if (s.saldoPorPagar == null || s.saldoPorPagar === '') s.saldoPorPagar = 0;
+            // saldoPorPagar: preferir Sheets si tiene retenciones aplicadas que el local no tiene,
+            // de lo contrario preferir local (ya refleja abonos registrados)
+            const sheetsConRet = (parseFloat(s.totalRetenciones) || 0) > 0 && !(parseFloat(local.totalRetenciones) || 0);
+            if (sheetsConRet) {
+              // Sheets ya aplicó retenciones que el local aún no tiene: usar valor de Sheets
+              s.saldoPorPagar = s.saldoPorPagar != null ? s.saldoPorPagar : 0;
+            } else if (local.saldoPorPagar != null) {
+              s.saldoPorPagar = local.saldoPorPagar;
+            } else if (s.saldoPorPagar == null || s.saldoPorPagar === '') {
+              s.saldoPorPagar = 0;
+            }
             if (!s.firmaBase64 && local.firmaBase64)      s.firmaBase64    = local.firmaBase64;
             if (!s.numFactura && local.numFactura)        s.numFactura     = local.numFactura;
+            // Si la anulación está pendiente de subir, conservar estado local
+            if (local.anulada && pendingSaleIds.has(s.id)) {
+              s.anulada        = true;
+              s.anuladoPor     = local.anuladoPor     || s.anuladoPor;
+              s.fechaAnulacion = local.fechaAnulacion || s.fechaAnulacion;
+            }
           }
         });
 
         const sheetsVentaIds = new Set(dataSales.sales.map(s => s.id));
         // Solo conservar ventas locales que están PENDIENTES de subir a Sheets
-        const pendingSaleIds = new Set(
-          getSyncQueue().filter(op => op.type === 'Sale' || op.type === 'saveSale').map(op => op.data && op.data.id).filter(Boolean)
-        );
         const soloLocalesV = DB.sales.filter(s => !sheetsVentaIds.has(s.id) && pendingSaleIds.has(s.id));
         DB.sales = [...dataSales.sales, ...soloLocalesV];
       }
@@ -7534,8 +7787,11 @@ async function syncFromSheets(showFeedback = false) {
     const esTimeout = e.name === 'AbortError';
     setSyncState('error');
     if (showFeedback) {
-      showToast(esTimeout ? '⏱ Tiempo de espera agotado — verifica tu conexión' : '⚠ Error al sincronizar');
+      showToast(esTimeout
+        ? '⏱ Tiempo de espera agotado (>30s) — Google Sheets puede estar lento. Los cambios locales están seguros.'
+        : '⚠ Error al sincronizar: ' + (e.message || 'sin conexión'));
     }
+    console.warn('[Sync] Error en syncFromSheets:', e.name, e.message);
     // No re-lanzar — el caller no debe bloquearse
   }
 }
@@ -8185,8 +8441,8 @@ function guardarEdicionAbono() {
 function confirmarAnularAbono(abonoId) {
   const abono = (DB.abonos || []).find(a => a.id === abonoId);
   if (!abono) return;
-  if (!confirm('\uD83D\uDEAB \u00BFAnular este abono de $' + fmt(abono.monto) + '?\\nEl monto quedara en CERO y aparecera como ANULADO.')) return;
-  if (!confirm('Anular este abono de $' + fmt(abono.monto) + '? El monto quedara en CERO y aparecera como ANULADO.')) return;
+  if (!confirm('🚫 ¿Anular este abono de $' + fmt(abono.monto) + '?\nEl monto quedará en CERO y aparecerá como ANULADO.')) return;
+  anularAbono(abonoId);
 }
 
 function anularAbono(abonoId) {
@@ -8566,27 +8822,63 @@ function invTab(name) {
   document.querySelectorAll('.inv-panel').forEach(p => p.classList.remove('active'));
   document.querySelector(`.inv-tab[onclick="invTab('${name}')"]`).classList.add('active');
   document.getElementById('inv-panel-' + name).classList.add('active');
+  _invTabActual = name;
+  invRefreshTab();
+}
 
-  if (name === 'saldos')      renderInvSaldos();
-  if (name === 'traslados')   renderInvTraslados();
-  if (name === 'cambios')     renderInvCambios();
-  if (name === 'movimientos') renderInvMovimientos();
+let _invTabActual = 'saldos';
+
+function invRefreshTab() {
+  // Actualizar etiqueta período
+  const desde = document.getElementById('inv-mob-desde')?.value || '';
+  const hasta  = document.getElementById('inv-mob-hasta')?.value  || '';
+  const lbl = document.getElementById('inv-mob-periodo-label');
+  if (lbl) {
+    if (desde || hasta) {
+      lbl.style.display = 'block';
+      lbl.textContent = 'Período: ' + (desde || '…') + ' → ' + (hasta || 'hoy');
+    } else {
+      lbl.style.display = 'none';
+    }
+  }
+  if (_invTabActual === 'saldos')      renderInvSaldos();
+  if (_invTabActual === 'traslados')   renderInvTraslados();
+  if (_invTabActual === 'cambios')     renderInvCambios();
+  if (_invTabActual === 'movimientos') renderInvMovimientos();
+}
+
+// Helper: lee fechas del filtro móvil de inventario
+function invMobFechas() {
+  const desde = document.getElementById('inv-mob-desde')?.value || '';
+  const hasta  = document.getElementById('inv-mob-hasta')?.value  || '';
+  const fechaFinal   = hasta || new Date().toISOString().split('T')[0];
+  const tienePeriodo = !!desde;
+  const fechaAntes   = tienePeriodo ? (() => {
+    const d = new Date(desde + 'T12:00:00');
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split('T')[0];
+  })() : '';
+  const fechaOk = (m) => {
+    const fm = infNormalizarFecha(m.fecha || '');
+    if (desde && fm < desde) return false;
+    if (hasta  && fm > hasta)  return false;
+    return true;
+  };
+  return { desde, hasta, fechaFinal, tienePeriodo, fechaAntes, fechaOk };
 }
 
 // ── PANEL SALDOS ──
 function renderInvSaldos() {
   const esAdminSup = currentUser && (currentUser.rol === 'admin' || currentUser.rol === 'supervisor');
   const filtroWrap = document.getElementById('inv-filtro-ruta-wrap');
-  const selRuta = document.getElementById('inv-filtro-ruta');
-  const search = (document.getElementById('inv-search-saldos').value || '').toLowerCase();
+  const selRuta    = document.getElementById('inv-filtro-ruta');
+  const search     = (document.getElementById('inv-search-saldos').value || '').toLowerCase();
+  const { fechaFinal, tienePeriodo, fechaAntes } = invMobFechas();
 
-  // Construir lista de vendedores a mostrar
-  // El inventario está ligado al VENDEDOR (no a la ruta)
   let vendedores = (DB.usuarios || []).filter(u => u.rol === 'vendedor' && u.estado === 'activo');
 
   if (esAdminSup) {
     filtroWrap.style.display = 'block';
-    // Solo rutas con manejaInventario !== false
     const rutasConInv = (DB.rutas || []).filter(r => r.manejaInventario !== false);
     const rutasSel = '<option value="">👤 Todos los vendedores</option>' +
       rutasConInv.map(r => `<option value="${r.id}">${r.nombre}</option>`).join('');
@@ -8596,7 +8888,6 @@ function renderInvSaldos() {
       const vids = getVendedorIdsDeRuta(ruta);
       vendedores = vids.length ? vendedores.filter(v => vids.includes(v.id.toString())) : [];
     } else {
-      // Sin filtro: mostrar solo vendedores con rutas de inventario
       const vendIdsConInv = new Set(
         rutasConInv.flatMap(r => getVendedorIdsDeRuta(r)).filter(Boolean).map(String)
       );
@@ -8604,110 +8895,142 @@ function renderInvSaldos() {
     }
   } else {
     filtroWrap.style.display = 'none';
-    // Vendedor: solo ve su propio inventario
     vendedores = vendedores.filter(v => v.id.toString().trim() === currentUser.id.toString().trim());
   }
 
+  // Totales globales usando calcSaldoHasta con fecha final
   let totalDisponible = 0, totalCambios = 0;
   vendedores.forEach(v => {
-    const s = calcSaldo(v.id);
-    totalDisponible += Object.values(s).reduce((a, b) => a + b.disponible, 0);
+    const s = calcSaldoHasta(v.id, fechaFinal);
+    totalDisponible += Object.values(s).reduce((a, b) => a + (b.disponible || 0), 0);
     totalCambios    += Object.values(s).reduce((a, b) => a + (b.saldoCambios || 0), 0);
   });
 
   document.getElementById('inv-stats-top').innerHTML = `
-    <div class="inv-stat-card"><div class="inv-stat-label">Unidades disponibles</div><div class="inv-stat-val">${totalDisponible}</div></div>
+    <div class="inv-stat-card"><div class="inv-stat-label">Disponibles${tienePeriodo ? ' (saldo final)' : ''}</div><div class="inv-stat-val">${totalDisponible}</div></div>
     <div class="inv-stat-card cambio"><div class="inv-stat-label">En cambios</div><div class="inv-stat-val">${totalCambios}</div></div>
   `;
 
   const el = document.getElementById('inv-saldos-list');
 
   if (!vendedores.length) {
-    el.innerHTML = `<div class="empty-state">
-      <div class="empty-icon">📦</div>
-      <div class="empty-title">Sin inventario registrado</div>
-      <div class="empty-desc">Aún no hay traslados registrados para este vendedor.</div>
-    </div>`;
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">Sin inventario registrado</div></div>`;
     return;
   }
 
+  const getCategoria = (p) => {
+    const prod = (DB.products || []).find(pr => pr.id === p.productId);
+    const linea = prod ? (prod.linea || prod.categoria || '') : '';
+    if (!linea) return 'Sin categoría';
+    const cat = (DB.categorias || []).find(c =>
+      typeof c === 'object' ? (c.codigo === linea || c.nombre === linea) : c === linea
+    );
+    if (!cat) return linea;
+    return typeof cat === 'object' ? cat.nombre : cat;
+  };
+
   let html = '';
   vendedores.forEach(v => {
-    const saldo = calcSaldo(v.id);
-    let prods = Object.values(saldo);
+    const sfinal   = calcSaldoHasta(v.id, fechaFinal);
+    const sinicial = (tienePeriodo && fechaAntes) ? calcSaldoHasta(v.id, fechaAntes) : {};
+
+    const allPids = new Set([...Object.keys(sfinal), ...Object.keys(sinicial)]);
+    let prods = [];
+    allPids.forEach(pid => {
+      const sf = sfinal[pid]   || { traslado:0, venta:0, cambio:0, cierreCambio:0, ventaCambio:0, disponible:0, saldoCambios:0, nombre:'', unidad:'' };
+      const si = sinicial[pid] || { traslado:0, venta:0, cambio:0, cierreCambio:0, disponible:0 };
+      if (sf.traslado === 0 && sf.disponible === 0 && si.disponible === 0) return;
+      prods.push({
+        productId: pid,
+        nombre:    sf.nombre || si.nombre || pid,
+        unidad:    sf.unidad || si.unidad || '',
+        // Acumulados totales
+        traslado:     sf.traslado, venta: sf.venta, cambio: sf.cambio,
+        cierreCambio: sf.cierreCambio, ventaCambio: sf.ventaCambio,
+        disponible:   sf.disponible, saldoCambios: sf.saldoCambios || 0,
+        // Período
+        dispInicial:    si.disponible   || 0,
+        entradas:       sf.traslado     - (si.traslado    || 0),
+        ventas:         sf.venta        - (si.venta       || 0),
+        cambios:        sf.cambio       - (si.cambio      || 0),
+        cierreCambios:  sf.cierreCambio - (si.cierreCambio|| 0),
+        dispFinal:      sf.disponible   || 0
+      });
+    });
+
     if (search) prods = prods.filter(p => p.nombre.toLowerCase().includes(search));
 
     const rutaActual = (DB.rutas || []).find(r => rutaTieneVendedor(r, v.id));
-    const rutaInfo = rutaActual ? ` · 🗺️ ${rutaActual.nombre}` : '';
+    const rutaInfo   = rutaActual ? ` · 🗺️ ${rutaActual.nombre}` : '';
 
-    // Solo mostrar encabezado de vendedor si hay admin/sup viendo varios
-    if (esAdminSup) {
-      html += `<div style="margin-bottom:24px">
-        <div class="inv-section-title">👤 ${v.nombre}${rutaInfo}</div>`;
-    } else {
-      html += `<div style="margin-bottom:24px">`;
-    }
+    html += `<div style="margin-bottom:24px">`;
+    if (esAdminSup) html += `<div class="inv-section-title">👤 ${v.nombre}${rutaInfo}</div>`;
 
     if (!prods.length) {
-      html += `<div style="color:var(--ink-muted);font-size:0.82rem;padding:10px 4px">Sin traslados registrados aún.</div>`;
+      html += `<div style="color:var(--ink-muted);font-size:0.82rem;padding:10px 4px">Sin movimientos en el período.</div>`;
+    } else if (tienePeriodo) {
+      // ── VISTA PERÍODO: fila por producto con desglose ──
+      html += prods.sort((a,b) => b.traslado - a.traslado).map(p => {
+        const ok = p.dispFinal >= 0;
+        return `<div class="inv-row" style="flex-wrap:wrap;gap:6px;align-items:flex-start">
+          <div style="flex:1;min-width:150px">
+            <div class="inv-row-name">${p.nombre}</div>
+            <div class="inv-row-sub">${p.unidad}</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;width:100%">
+            <span style="font-size:0.7rem;background:#e8f4f8;color:#1a3a8f;padding:3px 7px;border-radius:6px">
+              Ini: <b>${p.dispInicial}</b>
+            </span>
+            <span style="font-size:0.7rem;background:#e8f9ef;color:#1d6f42;padding:3px 7px;border-radius:6px">
+              🚚 +${p.entradas}
+            </span>
+            <span style="font-size:0.7rem;background:#fdecea;color:#c0392b;padding:3px 7px;border-radius:6px">
+              🛒 -${p.ventas}
+            </span>
+            ${p.cambios > 0 ? `<span style="font-size:0.7rem;background:#fff3e0;color:#856404;padding:3px 7px;border-radius:6px">🔄 -${p.cambios}</span>` : ''}
+            ${p.cierreCambios > 0 ? `<span style="font-size:0.7rem;background:#f3e9ff;color:#6c3483;padding:3px 7px;border-radius:6px">✂️ ${p.cierreCambios}</span>` : ''}
+            <span style="font-size:0.82rem;font-weight:800;background:${ok?'#eafaf1':'#fdecea'};color:${ok?'#27ae60':'#c0392b'};padding:3px 10px;border-radius:6px">
+              ${p.dispFinal} disp.
+            </span>
+          </div>
+        </div>`;
+      }).join('');
     } else {
-      // ── Agrupar por categoría ──
-      const getCategoria = (p) => {
-        // Buscar en DB.products para obtener la línea/categoría
-        const prod = (DB.products || []).find(pr => pr.id === p.productId);
-        const linea = prod ? (prod.linea || prod.categoria || '') : '';
-        if (!linea) return 'Sin categoría';
-        // Resolver nombre legible desde DB.categorias
-        const cat = (DB.categorias || []).find(c =>
-          typeof c === 'object' ? (c.codigo === linea || c.nombre === linea) : c === linea
-        );
-        if (!cat) return linea;
-        return typeof cat === 'object' ? cat.nombre : cat;
-      };
-
+      // ── VISTA ACUMULADA: agrupada por categoría (igual que antes) ──
       const grupos = {};
-      prods.forEach(p => {
+      prods.filter(p => p.disponible > 0 || p.saldoCambios > 0).forEach(p => {
         const cat = getCategoria(p);
         if (!grupos[cat]) grupos[cat] = [];
         grupos[cat].push(p);
       });
-
       Object.keys(grupos).sort().forEach(cat => {
         const catProds = grupos[cat];
         const totalDisp = catProds.reduce((a, b) => a + b.disponible, 0);
-        html += `
-          <div style="margin-bottom:16px">
-            <div style="display:flex;align-items:center;justify-content:space-between;
-              padding:6px 12px;background:var(--cream);border-radius:8px;margin-bottom:8px">
-              <span style="font-family:Syne,sans-serif;font-size:0.78rem;font-weight:700;
-                color:var(--green-dark);text-transform:uppercase;letter-spacing:0.4px">
-                📦 ${cat}
-              </span>
-              <span style="font-size:0.75rem;color:var(--ink-muted);font-weight:600">
-                ${totalDisp} uds disponibles
-              </span>
-            </div>`;
-
+        html += `<div style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;
+            padding:6px 12px;background:var(--cream);border-radius:8px;margin-bottom:8px">
+            <span style="font-family:Syne,sans-serif;font-size:0.78rem;font-weight:700;
+              color:var(--green-dark);text-transform:uppercase;letter-spacing:0.4px">📦 ${cat}</span>
+            <span style="font-size:0.75rem;color:var(--ink-muted);font-weight:600">${totalDisp} uds</span>
+          </div>`;
         html += catProds.map(p => {
-          const dispClass = p.disponible <= 0 ? 'zero' : '';
           const sc = p.saldoCambios || 0;
           return `<div class="inv-row">
             <div style="flex:1">
               <div class="inv-row-name">${p.nombre}</div>
-              <div class="inv-row-sub">🚚 ${p.traslado} tral&nbsp;·&nbsp;🛒 ${p.venta} vta&nbsp;·&nbsp;🔄 ${p.cambio} camb${p.cierreCambio ? ' · ✂️ '+p.cierreCambio+' cierre' : ''}${p.ventaCambio ? ' · 💰 '+p.ventaCambio+' vta-camb' : ''}</div>
+              <div class="inv-row-sub">🚚 ${p.traslado} tral · 🛒 ${p.venta} vta · 🔄 ${p.cambio} camb${p.cierreCambio?' · ✂️ '+p.cierreCambio+' cierre':''}${p.ventaCambio?' · 💰 '+p.ventaCambio+' vta-camb':''}</div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-              <div class="inv-badge ${dispClass}">${p.disponible}</div>
+              <div class="inv-badge ${p.disponible<=0?'zero':''}">${p.disponible}</div>
               <div style="font-size:0.65rem;color:var(--ink-muted)">disponible</div>
-              ${sc > 0 ? `<div style="font-size:0.65rem;background:#f3e9ff;color:#9b59b6;padding:1px 6px;border-radius:8px">🔄 ${sc} cambios</div>` : ''}
+              ${sc>0?`<div style="font-size:0.65rem;background:#f3e9ff;color:#9b59b6;padding:1px 6px;border-radius:8px">🔄 ${sc}</div>`:''}
             </div>
           </div>`;
         }).join('');
-
-        html += `</div>`; // cierre grupo categoría
+        html += `</div>`;
       });
     }
-    html += '</div>'; // cierre vendedor
+    html += '</div>';
   });
 
   el.innerHTML = html || '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Sin movimientos</div></div>';
@@ -8737,17 +9060,15 @@ function renderInvTraslados() {
     document.getElementById('inv-traslados-filtros').style.display = 'none';
   }
 
+  const { fechaOk: fechaOkTr } = invMobFechas();
   let movs = getInvMovimientos().filter(m => m.tipo === 'TRASLADO');
 
-  // Filtrar por rol
   if (!puedeVerTodos) {
-    // El inventario está ligado al vendedor
     movs = movs.filter(m => m.vendedorId && m.vendedorId.toString() === currentUser.id.toString());
   }
-
-  // Aplicar filtros del select
-  if (selRuta.value)  movs = movs.filter(m => m.rutaId === selRuta.value);
-  if (selVend.value)  movs = movs.filter(m => m.vendedorId && m.vendedorId.toString() === selVend.value);
+  if (selRuta.value) movs = movs.filter(m => m.rutaId === selRuta.value);
+  if (selVend.value) movs = movs.filter(m => m.vendedorId && m.vendedorId.toString() === selVend.value);
+  movs = movs.filter(fechaOkTr);
 
   if (!movs.length) {
     el.innerHTML = '<div class="empty-state"><div class="empty-icon">🚚</div><div class="empty-title">Sin traslados</div><div class="empty-desc">No hay traslados con los filtros seleccionados</div></div>';
@@ -8787,18 +9108,16 @@ function renderInvCambios() {
     document.getElementById('inv-cambios-filtros').style.display = 'none';
   }
 
+  const { fechaOk: fechaOkCamb } = invMobFechas();
   let todosMovs = getInvMovimientos();
   let movsCambio = todosMovs.filter(m => m.tipo === 'CAMBIO');
   let movsCierre = todosMovs.filter(m => m.tipo === 'CIERRE_CAMBIO' || m.tipo === 'VENTA_CAMBIO');
 
-  // Filtrar por rol — inventario ligado al vendedor (no a la ruta)
   if (!puedeVerTodos) {
     const filtrarVendedor = m => m.vendedorId && m.vendedorId.toString() === currentUser.id.toString();
     movsCambio = movsCambio.filter(filtrarVendedor);
     movsCierre = movsCierre.filter(filtrarVendedor);
   }
-
-  // Aplicar filtros del select
   if (selRuta.value) {
     movsCambio = movsCambio.filter(m => m.rutaId === selRuta.value);
     movsCierre = movsCierre.filter(m => m.rutaId === selRuta.value);
@@ -8807,6 +9126,8 @@ function renderInvCambios() {
     movsCambio = movsCambio.filter(m => m.vendedorId && m.vendedorId.toString() === selVend.value);
     movsCierre = movsCierre.filter(m => m.vendedorId && m.vendedorId.toString() === selVend.value);
   }
+  movsCambio = movsCambio.filter(fechaOkCamb);
+  movsCierre = movsCierre.filter(fechaOkCamb);
 
   // Calcular saldo neto = cambios - cierres
   const saldoBruto = {};
@@ -8886,15 +9207,15 @@ function renderInvMovimientos() {
     selRuta.value = '';
   }
 
+  const { fechaOk: fechaOkMov } = invMobFechas();
   let movs = getInvMovimientos();
 
-  // Vendedor: solo ve sus propios movimientos
   if (!esAdminSup) {
     movs = movs.filter(m => m.vendedorId && m.vendedorId.toString() === currentUser.id.toString());
   }
-
   if (selTipo.value) movs = movs.filter(m => m.tipo === selTipo.value);
   if (esAdminSup && selRuta.value) movs = movs.filter(m => m.rutaId === selRuta.value);
+  movs = movs.filter(fechaOkMov);
 
   if (!movs.length) {
     el.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Sin movimientos</div></div>';
@@ -9482,7 +9803,7 @@ function syncInventarioFromSheets(data) {
     if (mapaSheets.has(m.id)) return true;
     // Si tiene timestamp en el ID (TR/CB + timestamp), verificar si es muy reciente
     const ts = parseInt((m.id || '').replace(/^[A-Z_]+/, ''));
-    if (!isNaN(ts) && (ahora - ts) < 60000) return true; // < 60s → conservar
+    if (!isNaN(ts) && (ahora - ts) < 300000) return true; // < 5min → conservar (antes 60s)
     return false; // No está en Sheets y no es reciente → eliminar
   });
 }
@@ -10223,23 +10544,22 @@ function dtRenderCartera() {
     +'<div class="dt-stat-card"><div class="dt-stat-label">Clientes con deuda</div><div class="dt-stat-val">'+totales.clientesCount+'</div></div>'
     +'<div class="dt-stat-card orange"><div class="dt-stat-label">Docs pendientes</div><div class="dt-stat-val">'+totales.ventasPendientes+'</div></div>'
     +'</div>'
-    +'<div class="dt-panel"><div class="dt-panel-header"><div class="dt-panel-title">💳 Cartera por ruta</div>'
+    +'<div class="dt-panel"><div class="dt-panel-header"><div class="dt-panel-title">💳 Clientes con cartera pendiente</div>'
     +'<div class="dt-filters">'
-    +'<div class="dt-search-wrap"><span>🔍</span><input type="text" id="dt-cart-q" placeholder="Buscar cliente, venta o factura..." oninput="dtFiltrarCartera()"></div>'
+    +'<div class="dt-search-wrap"><span>🔍</span><input type="text" id="dt-cart-q" placeholder="Buscar cliente, nombre comercial, factura u operación..." oninput="dtFiltrarCartera()"></div>'
     +'<select class="dt-filter-select" id="dt-cart-ruta" onchange="dtFiltrarCartera()"><option value="">🗺 Todas las rutas</option>'
     +(DB.rutas||[]).map(r=>'<option value="'+r.id+'">'+r.nombre+'</option>').join('')
     +'</select>'
     +'</div></div>'
-    +'<div class="dt-panel-nopada" id="dt-cartera-body"></div>'
+    +'<div id="dt-cartera-body" style="padding:16px 20px"></div>'
     +'</div>';
 }
 
 function dtFiltrarCartera() {
   const q      = (document.getElementById('dt-cart-q')?.value||'').toLowerCase();
   const rutaId = document.getElementById('dt-cart-ruta')?.value||'';
-  const res    = document.getElementById('dt-cart-resumen');
-  const tabla  = document.getElementById('dt-cart-tabla');
-  if (!tabla) return;
+  const body   = document.getElementById('dt-cartera-body');
+  if (!body) return;
 
   let ventas = (DB.sales||[]).filter(s=>s.tipoPago==='CREDITO'&&!s.anulada);
   if (!puedeHacer('ventas:ver:todas')) {
@@ -10250,46 +10570,182 @@ function dtFiltrarCartera() {
     const ids = (DB.rutaClientes||[]).filter(rc=>rc.rutaId===rutaId).map(rc=>rc.clientId);
     ventas = ventas.filter(v=>ids.includes(v.clientId));
   }
-  if (q) ventas = ventas.filter(v=>
-    (v.clientNombre||'').toLowerCase().includes(q)||
-    (v.id||'').toLowerCase().includes(q)||
-    (v.numFactura||'').toLowerCase().includes(q)
+
+  // Agrupar por cliente
+  const clientMap = {};
+  ventas.forEach(v => {
+    const { saldoActual } = calcSaldoVenta(v.id, v.total);
+    if (!clientMap[v.clientId]) {
+      const cli = (DB.clientes||[]).find(c => c.id === v.clientId);
+      clientMap[v.clientId] = {
+        clientId: v.clientId,
+        nombre: v.clientNombre || v.clientId,
+        nombreComercial: (cli && cli.nombreComercial) || '',
+        ventas: [], totalDeuda: 0, pendientes: 0
+      };
+    }
+    clientMap[v.clientId].ventas.push(v);
+    if (saldoActual > 0.009) {
+      clientMap[v.clientId].totalDeuda += saldoActual;
+      clientMap[v.clientId].pendientes++;
+    }
+  });
+
+  let clientes = Object.values(clientMap).filter(c => c.pendientes > 0);
+  if (q) clientes = clientes.filter(c =>
+    (c.nombre||'').toLowerCase().includes(q) ||
+    (c.nombreComercial||'').toLowerCase().includes(q) ||
+    c.ventas.some(v =>
+      (v.numFactura||'').toLowerCase().includes(q) ||
+      (v.id||'').toLowerCase().includes(q)
+    )
   );
+  clientes.sort((a,b) => b.totalDeuda - a.totalDeuda);
 
-  const conSaldo = ventas.filter(v=>calcSaldoVenta(v.id,v.total).saldoActual>0.009)
-    .sort((a,b)=>calcSaldoVenta(b.id,b.total).saldoActual-calcSaldoVenta(a.id,a.total).saldoActual);
-
-  const totalDeuda = conSaldo.reduce((s,v)=>s+calcSaldoVenta(v.id,v.total).saldoActual,0);
-  if (res) res.textContent = conSaldo.length + ' documento(s) pendiente(s) · Total: $' + fmt(totalDeuda);
-
-  if (!conSaldo.length) {
-    tabla.innerHTML = '<div class="dt-empty"><div class="dt-empty-icon">✅</div><div class="dt-empty-text">Sin cartera pendiente</div></div>';
+  if (!clientes.length) {
+    body.innerHTML = '<div class="dt-empty"><div class="dt-empty-icon">✅</div><div class="dt-empty-text">Sin cartera pendiente</div></div>';
     return;
   }
 
-  const filas = conSaldo.map(v=>{
-    const {saldoActual,sumaAbonos} = calcSaldoVenta(v.id,v.total);
-    const rc   = (DB.rutaClientes||[]).find(r=>r.clientId===v.clientId);
-    const ruta = rc?(DB.rutas||[]).find(r=>r.id===rc.rutaId):null;
-    const f = parseFecha(v.fecha);
-    return `<tr>
-      <td style="font-weight:600">${v.clientNombre}</td>
-      <td style="font-size:0.77rem;color:#1a3a8f">${v.numFactura||v.id}</td>
-      <td style="font-size:0.77rem">${f.toLocaleDateString('es')}</td>
-      <td><span class="dt-badge dt-badge-blue">${ruta?ruta.nombre:'Sin ruta'}</span></td>
-      <td style="text-align:right">$${fmt(v.total)}</td>
-      <td style="text-align:right;color:#27ae60">$${fmt(sumaAbonos+(parseFloat(v.abonoInicial||v.abono||0)))}</td>
-      <td style="text-align:right;font-family:Syne,sans-serif;font-weight:700;color:#c0392b">$${fmt(saldoActual)}</td>
-      <td>
-        <button class="dt-btn dt-btn-sm" style="background:#fdecea;color:#c0392b;border:none" onclick="abrirModalAbono('${v.id}')">💰 Abonar</button>
-      </td>
-    </tr>`;
+  body.innerHTML = clientes.map(c => {
+    const rc   = (DB.rutaClientes||[]).find(r=>r.clientId===c.clientId);
+    const ruta = rc ? (DB.rutas||[]).find(r=>r.id===rc.rutaId) : null;
+    return `<div onclick="dtVerClienteCartera('${c.clientId}')"
+      style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;
+             border:1px solid #e9ecef;border-left:4px solid #c0392b;border-radius:10px;margin-bottom:10px;
+             cursor:pointer;background:white;transition:all 0.15s"
+      onmouseover="this.style.background='#fff5f5';this.style.borderLeftColor='#922b21'"
+      onmouseout="this.style.background='white';this.style.borderLeftColor='#c0392b'">
+      <div>
+        <div style="font-weight:700;font-size:0.97rem;color:#1a1a2e">${c.nombre}</div>
+        <div style="font-size:0.75rem;color:#666;margin-top:3px">
+          ${ruta ? '🗺 '+ruta.nombre+' &nbsp;·&nbsp; ' : ''}
+          <span style="color:#c0392b;font-weight:600">${c.pendientes} factura${c.pendientes!==1?'s':''} adeudada${c.pendientes!==1?'s':''}</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:Syne,sans-serif;font-size:1.3rem;font-weight:800;color:#c0392b">$${fmt(c.totalDeuda)}</div>
+        <div style="font-size:0.7rem;color:#aaa;margin-top:1px">saldo pendiente &rsaquo;</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function dtVerClienteCartera(clientId) {
+  const body = document.getElementById('dt-cartera-body');
+  if (!body) return;
+
+  const ventas = (DB.sales||[])
+    .filter(s => s.clientId===clientId && s.tipoPago==='CREDITO' && !s.anulada)
+    .sort((a,b) => b.fecha.localeCompare(a.fecha));
+  if (!ventas.length) return;
+
+  const clientNombre = ventas[0].clientNombre || clientId;
+  const deudaTotal   = ventas.reduce((s,v) => s + calcSaldoVenta(v.id,v.total).saldoActual, 0);
+  const pendCount    = ventas.filter(v => calcSaldoVenta(v.id,v.total).saldoActual > 0).length;
+  const puedeAbonar  = puedeHacer('ventas:realizar') || esAdminOSup();
+
+  const facturas = ventas.map(v => {
+    const { saldoActual, sumaAbonos, saldoInicial } = calcSaldoVenta(v.id, v.total);
+    const pagada       = saldoActual <= 0;
+    const f            = parseFecha(v.fecha);
+    const fechaStr     = f.toLocaleDateString('es', {day:'2-digit', month:'short', year:'numeric'});
+    const horaStr      = f.toLocaleTimeString('es', {hour:'2-digit', minute:'2-digit'});
+    const totalRet     = parseFloat(v.totalRetenciones || 0);
+    const abonoInicial = parseFloat(v.abonoInicial || v.abono || 0);
+    const abonosPost   = (DB.abonos||[]).filter(a => a.ventaId===v.id && !a.anulado);
+
+    const retDetalle = [
+      v.retFuente > 0 ? 'Rtefuente: $'+fmt(v.retFuente) : '',
+      v.retIVA    > 0 ? 'ReteIVA: $'+fmt(v.retIVA)      : '',
+      v.retICA    > 0 ? 'ReteICA: $'+fmt(v.retICA)       : ''
+    ].filter(Boolean).join(' &nbsp;·&nbsp; ');
+
+    const abonosHTML = [
+      abonoInicial > 0
+        ? `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#e8f4f8;border-radius:6px;margin-bottom:4px">
+             <span style="font-size:0.75rem;color:#1a3a8f;font-weight:600">Abono inicial (registro de venta)</span>
+             <span style="font-family:Syne,sans-serif;font-weight:700;color:#1a3a8f">+$${fmt(abonoInicial)}</span>
+           </div>`
+        : '',
+      ...abonosPost.map(a => {
+        const af = parseFecha(a.fecha);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#f0faf5;border-radius:6px;margin-bottom:4px">
+          <div>
+            <span style="font-size:0.75rem;color:#155724;font-weight:600">
+              ${af.toLocaleDateString('es',{day:'2-digit',month:'short',year:'numeric'})} ${af.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})}
+            </span>
+            <span style="font-size:0.7rem;color:#999;margin-left:6px">por ${a.vendedorNombre||'—'}</span>
+            ${a.nota ? `<span style="font-size:0.7rem;color:#666;margin-left:6px">· ${a.nota}</span>` : ''}
+          </div>
+          <span style="font-family:Syne,sans-serif;font-weight:700;color:#27ae60">+$${fmt(a.monto)}</span>
+        </div>`;
+      })
+    ].filter(Boolean).join('') || `<div style="font-size:0.75rem;color:#aaa;padding:4px 0">Sin abonos registrados</div>`;
+
+    return `<div style="border:1px solid ${pagada?'#d4edda':'#fdecea'};border-radius:12px;padding:16px 18px;margin-bottom:14px;background:${pagada?'#f8fff9':'white'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+        <div>
+          <div style="font-size:0.68rem;color:#aaa;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px">N° Operación &nbsp;·&nbsp; N° Factura</div>
+          <div style="font-weight:700;font-size:1rem;color:#1a1a2e">${v.id}${v.numFactura ? ' &nbsp;<span style="color:#1a3a8f">· '+v.numFactura+'</span>' : ''}</div>
+          <div style="font-size:0.78rem;color:#666;margin-top:3px">📅 ${fechaStr} &nbsp;&nbsp; 🕐 ${horaStr}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:12px">
+          ${pagada
+            ? '<span style="background:#d4edda;color:#155724;font-size:0.73rem;font-weight:700;padding:5px 12px;border-radius:99px">✓ Pagada</span>'
+            : `<div style="font-family:Syne,sans-serif;font-size:1.25rem;font-weight:800;color:#c0392b">$${fmt(saldoActual)}</div>
+               <div style="font-size:0.68rem;color:#aaa">saldo pendiente</div>`}
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+        <div style="background:#f8f9fa;border-radius:8px;padding:10px 12px">
+          <div style="font-size:0.67rem;color:#999;text-transform:uppercase;margin-bottom:2px">Valor venta</div>
+          <div style="font-weight:700;font-size:0.95rem;color:#1a1a2e">$${fmt(v.total)}</div>
+        </div>
+        <div style="background:${totalRet>0?'#fff8e1':'#f8f9fa'};border-radius:8px;padding:10px 12px">
+          <div style="font-size:0.67rem;color:#999;text-transform:uppercase;margin-bottom:2px">Retenciones</div>
+          <div style="font-weight:700;font-size:0.95rem;color:${totalRet>0?'#7a4f00':'#aaa'}">${totalRet>0?'-$'+fmt(totalRet):'—'}</div>
+          ${retDetalle ? `<div style="font-size:0.68rem;color:#7a4f00;margin-top:2px">${retDetalle}</div>` : ''}
+        </div>
+        <div style="background:${pagada?'#d4edda':'#fdecea'};border-radius:8px;padding:10px 12px">
+          <div style="font-size:0.67rem;color:#999;text-transform:uppercase;margin-bottom:2px">Total a pagar</div>
+          <div style="font-weight:800;font-size:0.95rem;font-family:Syne,sans-serif;color:${pagada?'#155724':'#c0392b'}">$${fmt(saldoInicial)}</div>
+        </div>
+      </div>
+
+      <div style="border-top:1px dashed #dee2e6;padding-top:10px">
+        <div style="font-size:0.68rem;font-weight:700;color:#999;text-transform:uppercase;margin-bottom:6px">Abonos registrados</div>
+        ${abonosHTML}
+      </div>
+      ${!pagada && puedeAbonar
+        ? `<button onclick="abrirModalAbono('${v.id}')"
+             style="margin-top:12px;width:100%;padding:10px;border:2px solid #c0392b;background:none;
+                    border-radius:8px;color:#c0392b;font-weight:700;font-size:0.87rem;cursor:pointer;
+                    font-family:DM Sans,sans-serif">
+             💰 Registrar Abono
+           </button>`
+        : ''}
+    </div>`;
   }).join('');
 
-  tabla.innerHTML = `<table class="dt-table">
-    <thead><tr><th>Cliente</th><th>Factura/ID</th><th>Fecha</th><th>Ruta</th><th style="text-align:right">Venta</th><th style="text-align:right">Abonado</th><th style="text-align:right">Saldo</th><th></th></tr></thead>
-    <tbody>${filas}</tbody>
-  </table>`;
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+      <button onclick="dtFiltrarCartera()"
+        style="border:1px solid #dee2e6;background:white;border-radius:8px;padding:7px 14px;
+               cursor:pointer;font-size:0.85rem;color:#555;font-family:DM Sans,sans-serif">
+        ← Volver
+      </button>
+      <div>
+        <div style="font-family:Syne,sans-serif;font-size:1.15rem;font-weight:800;color:#1a1a2e">${clientNombre}</div>
+        <div style="font-size:0.76rem;margin-top:1px">
+          <span style="color:#c0392b;font-weight:700">${pendCount} factura${pendCount!==1?'s':''} pendiente${pendCount!==1?'s':''}</span>
+          &nbsp;·&nbsp;
+          <span style="color:#c0392b;font-weight:700">Saldo total: $${fmt(deudaTotal)}</span>
+        </div>
+      </div>
+    </div>
+    ${facturas}`;
 }
 
 // ── INFORMES ──────────────────────────────────────────────────────
@@ -10343,7 +10799,8 @@ function dtRenderInventario() {
   const rutaOpts = (DB.rutas||[]).map(r=>'<option value="'+r.id+'">'+r.nombre+'</option>').join('');
   const puedeTraslados = puedeHacer('inv:traslados');
   const puedeCambios   = puedeHacer('inv:cambios');
-  return '<div class="dt-panel"><div class="dt-panel-header"><div class="dt-panel-title">📦 Inventario</div>'
+  return '<div class="dt-panel">'
+    +'<div class="dt-panel-header"><div class="dt-panel-title">📦 Inventario</div>'
     +'<div class="dt-filters">'
     +'<button class="dt-btn dt-btn-primary dt-btn-sm" id="dtinv-tab-saldos" data-tab="saldos" onclick="dtInvTab(this.dataset.tab)">📊 Saldos</button>'
     +'<button class="dt-btn dt-btn-outline dt-btn-sm" id="dtinv-tab-traslados" data-tab="traslados" onclick="dtInvTab(this.dataset.tab)">🚚 Traslados</button>'
@@ -10353,6 +10810,16 @@ function dtRenderInventario() {
     +(puedeTraslados ? '<button class="dt-btn dt-btn-primary dt-btn-sm" id="dtinv-btn-traslado" onclick="openModalTraslado()" style="margin-left:8px">🚚 + Traslado</button>' : '')
     +(puedeCambios   ? '<button class="dt-btn dt-btn-outline dt-btn-sm"  id="dtinv-btn-cambio"   onclick="openModalCambio()"   style="margin-left:4px">🔄 + Cambio</button>'   : '')
     +'</div></div>'
+    // Fila de filtros de fecha
+    +'<div style="display:flex;align-items:center;gap:10px;padding:10px 20px;background:#f8f9fa;border-bottom:1px solid #e9ecef;flex-wrap:wrap">'
+    +'<span style="font-size:0.78rem;font-weight:600;color:#555">📅 Período:</span>'
+    +'<input type="date" id="dt-inv-desde" class="dt-filter-date" placeholder="Desde" oninput="dtRenderInvContent()" style="font-size:0.82rem">'
+    +'<span style="font-size:0.78rem;color:#aaa">→</span>'
+    +'<input type="date" id="dt-inv-hasta" class="dt-filter-date" placeholder="Hasta" oninput="dtRenderInvContent()" style="font-size:0.82rem">'
+    +'<button onclick="document.getElementById(\'dt-inv-desde\').value=\'\';document.getElementById(\'dt-inv-hasta\').value=\'\';dtRenderInvContent()" '
+    +  'style="padding:4px 10px;border:1px solid #dee2e6;background:white;border-radius:6px;font-size:0.75rem;color:#666;cursor:pointer">✕ Limpiar</button>'
+    +'<span id="dt-inv-periodo-label" style="font-size:0.75rem;color:#1a3a8f;font-weight:600;margin-left:4px"></span>'
+    +'</div>'
     +'<div class="dt-panel-nopada" id="dt-inv-content"></div>'
     +'</div>';
 }
@@ -10375,9 +10842,36 @@ function dtRenderInvContent() {
   const container = document.getElementById('dt-inv-content');
   if (!container) return;
 
-  const rutaSel  = document.getElementById('dt-inv-ruta');
+  const rutaSel    = document.getElementById('dt-inv-ruta');
   const rutaFiltro = rutaSel ? rutaSel.value : '';
   const esAdminSup = currentUser && (currentUser.rol === 'admin' || currentUser.rol === 'supervisor');
+
+  // Fechas del filtro
+  const desde = document.getElementById('dt-inv-desde')?.value || '';
+  const hasta  = document.getElementById('dt-inv-hasta')?.value  || '';
+  const fechaFinal    = hasta  || new Date().toISOString().split('T')[0];
+  const tienePeriodo  = !!desde;
+
+  // Actualizar etiqueta de período
+  const lblPer = document.getElementById('dt-inv-periodo-label');
+  if (lblPer) lblPer.textContent = tienePeriodo
+    ? 'Período: ' + desde + ' → ' + fechaFinal
+    : '';
+
+  // Fecha un día antes de "desde" para calcular saldo inicial
+  const fechaAntes = tienePeriodo ? (() => {
+    const d = new Date(desde + 'T12:00:00');
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split('T')[0];
+  })() : '';
+
+  // Helper: filtra movimientos por rango de fecha
+  const fechaOkInv = (m) => {
+    const fm = infNormalizarFecha(m.fecha || '');
+    if (desde && fm < desde) return false;
+    if (hasta  && fm > hasta)  return false;
+    return true;
+  };
 
   // ── SALDOS ──────────────────────────────────────────────────────
   if (_dtInvTab === 'saldos') {
@@ -10399,48 +10893,128 @@ function dtRenderInvContent() {
       vendedores = vendedores.filter(v => v.id.toString().trim() === currentUser.id.toString().trim());
     }
 
-    let totalDisp = 0, totalCamb = 0;
-    vendedores.forEach(v => {
-      const s = calcSaldo(v.id);
-      totalDisp += Object.values(s).reduce((a, b) => a + (b.disponible || 0), 0);
-      totalCamb += Object.values(s).reduce((a, b) => a + (b.saldoCambios || 0), 0);
-    });
+    // Totales globales
+    let totalSaldoFinal = 0, totalCamb = 0;
 
-    let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px 8px">'
-      + '<div class="dt-stat-card"><div class="dt-stat-label">Unidades disponibles</div><div class="dt-stat-val">' + totalDisp + '</div></div>'
-      + '<div class="dt-stat-card orange"><div class="dt-stat-label">En cambios</div><div class="dt-stat-val">' + totalCamb + '</div></div>'
-      + '</div>';
+    let html = '';
 
     if (!vendedores.length) {
       html += '<div style="text-align:center;padding:30px;color:#888">Sin datos de inventario para la ruta seleccionada</div>';
-    } else {
-      vendedores.forEach(v => {
-        const saldo = calcSaldo(v.id);
-        const prods = Object.entries(saldo).filter(([, s]) => (s.disponible || 0) > 0 || (s.saldoCambios || 0) > 0);
-        if (!prods.length) return;
-        html += '<div style="padding:4px 20px 2px">'
-          + '<div style="font-size:0.72rem;font-weight:700;color:#0f3460;text-transform:uppercase;letter-spacing:.05em;'
-          + 'padding:6px 0 4px;border-bottom:1px solid #f0f0f0;margin-bottom:6px">👤 ' + (v.nombre || v.id) + '</div>';
-        html += '<table class="dt-table"><thead><tr><th>Producto</th><th>Disponible</th><th>En cambios</th></tr></thead><tbody>';
-        prods.forEach(([prodId, s]) => {
-          const prod = (DB.products || []).find(p => p.id === prodId);
-          const nombre = prod ? prod.nombre : prodId;
+      container.innerHTML = html;
+      return;
+    }
+
+    // Aviso de período activo
+    if (tienePeriodo) {
+      html += `<div style="background:#e8f4f8;border-left:4px solid #1a3a8f;padding:8px 16px;font-size:0.78rem;color:#1a3a8f;font-weight:600">
+        📅 Mostrando movimientos del período: <strong>${desde}</strong> al <strong>${fechaFinal}</strong>
+      </div>`;
+    }
+
+    vendedores.forEach(v => {
+      // Saldo final al "hasta" (o acumulado total si no hay filtro)
+      const sfinal   = calcSaldoHasta(v.id, fechaFinal);
+      // Saldo inicial (día antes de "desde")
+      const sinicial = (tienePeriodo && fechaAntes) ? calcSaldoHasta(v.id, fechaAntes) : {};
+
+      const allPids = new Set([...Object.keys(sfinal), ...Object.keys(sinicial)]);
+      const prods = [];
+
+      allPids.forEach(pid => {
+        const sf = sfinal[pid]   || { traslado:0, venta:0, cambio:0, cierreCambio:0, disponible:0, saldoCambios:0, nombre:'', unidad:'' };
+        const si = sinicial[pid] || { traslado:0, venta:0, cambio:0, cierreCambio:0, disponible:0 };
+        if (sf.traslado === 0 && sf.disponible === 0 && si.disponible === 0) return;
+
+        prods.push({
+          pid,
+          nombre:       sf.nombre || si.nombre || pid,
+          unidad:       sf.unidad  || si.unidad  || '',
+          // Sin período: acumulados totales
+          disponible:   sf.disponible   || 0,
+          saldoCambios: sf.saldoCambios || 0,
+          traslado:     sf.traslado     || 0,
+          // Con período: desglose
+          dispInicial:      si.disponible    || 0,
+          entradas:         sf.traslado      - (si.traslado      || 0),
+          ventas:           sf.venta         - (si.venta         || 0),
+          cambios:          sf.cambio        - (si.cambio        || 0),
+          cierreCambios:    sf.cierreCambio  - (si.cierreCambio  || 0),
+          dispFinal:        sf.disponible    || 0
+        });
+      });
+
+      if (!prods.length) return;
+
+      const rutaVend = (DB.rutas||[]).find(r => getVendedorIdsDeRuta(r).includes(v.id.toString()));
+      const rutaNom  = rutaVend ? rutaVend.nombre : '';
+      const totalVend = prods.reduce((s, p) => s + (tienePeriodo ? p.dispFinal : p.disponible), 0);
+      totalSaldoFinal += totalVend;
+      totalCamb += prods.reduce((s, p) => s + p.saldoCambios, 0);
+
+      html += '<div style="padding:12px 20px 4px">'
+        + '<div style="font-size:0.72rem;font-weight:700;color:#0f3460;text-transform:uppercase;letter-spacing:.05em;'
+        + 'padding:6px 0 4px;border-bottom:1px solid #f0f0f0;margin-bottom:6px;display:flex;justify-content:space-between">'
+        + '<span>👤 ' + (v.nombre || v.id) + (rutaNom ? ' &nbsp;·&nbsp; 🗺 ' + rutaNom : '') + '</span>'
+        + '<span style="color:' + (totalVend >= 0 ? '#27ae60' : '#c0392b') + '">' + totalVend + ' unid. disponibles</span>'
+        + '</div>';
+
+      if (tienePeriodo) {
+        // Vista período: tabla con saldo inicial, entradas, ventas, cambios, cierre cambios, saldo final
+        html += '<table class="dt-table"><thead><tr>'
+          + '<th>Producto</th>'
+          + '<th style="text-align:center">Saldo Inicial</th>'
+          + '<th style="text-align:center">Entradas</th>'
+          + '<th style="text-align:center">Ventas</th>'
+          + '<th style="text-align:center">Cambios</th>'
+          + '<th style="text-align:center">Cierre Camb.</th>'
+          + '<th style="text-align:center">Saldo Final</th>'
+          + '</tr></thead><tbody>';
+
+        prods.sort((a, b) => b.traslado - a.traslado).forEach(p => {
+          const ok = p.dispFinal >= 0;
           html += '<tr>'
-            + '<td style="font-weight:600">' + nombre + '</td>'
-            + '<td><span class="dt-badge ' + (s.disponible > 0 ? 'dt-badge-green' : 'dt-badge-gray') + '">' + (s.disponible || 0) + '</span></td>'
-            + '<td><span class="dt-badge dt-badge-orange">' + (s.saldoCambios || 0) + '</span></td>'
+            + '<td style="font-weight:600">' + p.nombre + '<br><span style="font-size:0.7rem;color:#aaa">' + p.unidad + '</span></td>'
+            + '<td style="text-align:center"><span class="dt-badge dt-badge-blue">' + p.dispInicial + '</span></td>'
+            + '<td style="text-align:center"><span class="dt-badge dt-badge-green">+' + p.entradas + '</span></td>'
+            + '<td style="text-align:center"><span class="dt-badge dt-badge-red">' + (p.ventas > 0 ? '-' : '') + p.ventas + '</span></td>'
+            + '<td style="text-align:center"><span class="dt-badge dt-badge-orange">' + (p.cambios > 0 ? '-' : '') + p.cambios + '</span></td>'
+            + '<td style="text-align:center"><span class="dt-badge dt-badge-gray">' + p.cierreCambios + '</span></td>'
+            + '<td style="text-align:center"><span class="dt-badge ' + (ok ? 'dt-badge-green' : 'dt-badge-red') + '" style="font-weight:800;font-size:0.88rem">' + p.dispFinal + '</span></td>'
             + '</tr>';
         });
-        html += '</tbody></table></div>';
-      });
-    }
-    container.innerHTML = html;
+        html += '</tbody></table>';
+
+      } else {
+        // Vista acumulada: tabla simple disponible + en cambios
+        html += '<table class="dt-table"><thead><tr><th>Producto</th><th style="text-align:center">Disponible</th><th style="text-align:center">En cambios</th></tr></thead><tbody>';
+        prods.filter(p => p.disponible > 0 || p.saldoCambios > 0)
+          .sort((a, b) => b.traslado - a.traslado)
+          .forEach(p => {
+            html += '<tr>'
+              + '<td style="font-weight:600">' + p.nombre + '</td>'
+              + '<td style="text-align:center"><span class="dt-badge ' + (p.disponible > 0 ? 'dt-badge-green' : 'dt-badge-gray') + '">' + p.disponible + '</span></td>'
+              + '<td style="text-align:center"><span class="dt-badge dt-badge-orange">' + p.saldoCambios + '</span></td>'
+              + '</tr>';
+          });
+        html += '</tbody></table>';
+      }
+      html += '</div>';
+    });
+
+    // Stats globales al inicio
+    let statsHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px 8px">'
+      + '<div class="dt-stat-card"><div class="dt-stat-label">Unidades disponibles' + (tienePeriodo ? ' (saldo final)' : '') + '</div><div class="dt-stat-val">' + totalSaldoFinal + '</div></div>'
+      + '<div class="dt-stat-card orange"><div class="dt-stat-label">En cambios</div><div class="dt-stat-val">' + totalCamb + '</div></div>'
+      + '</div>';
+
+    container.innerHTML = statsHtml + html;
 
   // ── TRASLADOS ────────────────────────────────────────────────────
   } else if (_dtInvTab === 'traslados') {
     let movs = getInvMovimientos().filter(m => m.tipo === 'TRASLADO');
     if (!esAdminSup) movs = movs.filter(m => m.vendedorId && m.vendedorId.toString() === currentUser.id.toString());
     if (rutaFiltro) movs = movs.filter(m => m.rutaId === rutaFiltro);
+    if (desde || hasta) movs = movs.filter(fechaOkInv);
     const sorted = [...movs].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
     container.innerHTML = sorted.length
       ? '<div style="padding:12px 20px">' + sorted.map(m => movCardHTML(m)).join('') + '</div>'
@@ -10451,6 +11025,7 @@ function dtRenderInvContent() {
     let movs = getInvMovimientos().filter(m => m.tipo === 'CAMBIO');
     if (!esAdminSup) movs = movs.filter(m => m.vendedorId && m.vendedorId.toString() === currentUser.id.toString());
     if (rutaFiltro) movs = movs.filter(m => m.rutaId === rutaFiltro);
+    if (desde || hasta) movs = movs.filter(fechaOkInv);
     const sorted = [...movs].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
     const totalUnid = sorted.reduce((a, m) => a + (m.productos || []).reduce((s, p) => s + Math.abs(p.qty || 0), 0), 0);
     let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px 8px">'
@@ -10466,6 +11041,7 @@ function dtRenderInvContent() {
     let movs = getInvMovimientos();
     if (!esAdminSup) movs = movs.filter(m => m.vendedorId && m.vendedorId.toString() === currentUser.id.toString());
     if (rutaFiltro) movs = movs.filter(m => m.rutaId === rutaFiltro);
+    if (desde || hasta) movs = movs.filter(fechaOkInv);
 
     const tipos = ['TRASLADO','VENTA','CAMBIO','AJUSTE','CIERRE_CAMBIO','VENTA_CAMBIO'];
     const tipoActual = window._dtInvMovTipo || '';
