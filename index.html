@@ -2467,10 +2467,23 @@ document.addEventListener('DOMContentLoaded', () => {
   localStorage.setItem('ventaruta_url', DB.config.appsScriptUrl);
   saveDB();
 
-  // Mostrar login inmediatamente (sin esperar red)
+  // Restaurar sesión guardada o mostrar login
   const splashEl = document.getElementById('splash');
   setTimeout(() => {
     if (splashEl) splashEl.classList.add('hidden');
+    const sesionGuardada = localStorage.getItem('ventaruta_session');
+    if (sesionGuardada) {
+      try {
+        const { id } = JSON.parse(sesionGuardada);
+        const usuario = (DB.usuarios || []).find(u => u.id === id && u.estado !== 'inactivo');
+        if (usuario) {
+          currentUser = usuario;
+          startApp();
+          return;
+        }
+      } catch(e) {}
+      localStorage.removeItem('ventaruta_session'); // sesión inválida, limpiar
+    }
     showLoginScreen();
   }, 400);
 
@@ -2622,6 +2635,7 @@ function doLogin() {
     return;
   }
   currentUser = usuario;
+  localStorage.setItem('ventaruta_session', JSON.stringify({ id: usuario.id }));
   document.getElementById('login-screen').classList.add('hidden');
   startApp();
 }
@@ -2629,6 +2643,7 @@ function doLogin() {
 function doLogout() {
   if (!confirm('¿Cerrar sesión?')) return;
   currentUser = null;
+  localStorage.removeItem('ventaruta_session');
   if (window._autoSyncInterval) { clearInterval(window._autoSyncInterval); window._autoSyncInterval = null; }
   document.getElementById('app').classList.remove('visible');
   document.getElementById('desktop-app').classList.remove('dt-visible');
