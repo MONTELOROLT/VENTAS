@@ -6070,7 +6070,7 @@ function applyHistFilters() {
       const porDia = {};
       vdata.ventas.forEach(s => {
         const f = parseFecha(s.fecha);
-        const key = isNaN(f) ? '9999-12-31' : f.toISOString().slice(0,10); // clave ordenable
+        const key = isNaN(f) ? '9999-12-31' : fechaLocalKey(f);
         if (!porDia[key]) porDia[key] = { label: isNaN(f) ? 'Fecha inválida' : f.toLocaleDateString('es', { weekday:'long', year:'numeric', month:'long', day:'numeric' }), ventas: [] };
         porDia[key].ventas.push(s);
       });
@@ -6127,7 +6127,7 @@ function applyHistFilters() {
     const porDia = {};
     list.forEach(s => {
       const f = parseFecha(s.fecha);
-      const key = isNaN(f) ? '9999-12-31' : f.toISOString().slice(0,10);
+      const key = isNaN(f) ? '9999-12-31' : fechaLocalKey(f);
       if (!porDia[key]) porDia[key] = { label: isNaN(f) ? 'Fecha inválida' : f.toLocaleDateString('es', { weekday:'long', year:'numeric', month:'long', day:'numeric' }), ventas: [] };
       porDia[key].ventas.push(s);
     });
@@ -7486,6 +7486,13 @@ async function syncAll() {
 // showFeedback=true para mostrar toasts
 
 
+
+// ── Clave de fecha LOCAL (YYYY-MM-DD) sin conversión UTC ──
+function fechaLocalKey(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
 
 // ── parseFecha: parsea cualquier formato de fecha de forma segura ──
 function parseFecha(val) {
