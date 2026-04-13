@@ -1,6 +1,6 @@
 // ── Service Worker — Monteloro Ventas ──
 // Actualizar este número cada vez que subes una nueva versión del index.html
-const CACHE_VERSION = 'monteloro-v1.3.260408';
+const CACHE_VERSION = 'monteloro-v1.4.260413';
 const CACHE_FILES   = ['./index.html', './manifest.json'];
 
 // Instalar: cachear archivos del app

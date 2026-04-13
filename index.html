@@ -992,7 +992,7 @@
           <button class="logout-btn" onclick="resetAppData()" style="background:rgba(255,100,50,0.25);margin-right:4px" title="Limpiar datos locales">🗑️</button>
           <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
             <button class="logout-btn" onclick="doLogout()">Salir</button>
-            <span style="font-size:0.5rem;color:rgba(255,255,255,0.4);letter-spacing:0.03em;font-weight:500;user-select:none">V-1.3.260408</span>
+            <span style="font-size:0.5rem;color:rgba(255,255,255,0.4);letter-spacing:0.03em;font-weight:500;user-select:none">V-1.4.260413</span>
           </div>
         </div>
       </div>
@@ -2239,7 +2239,7 @@ function cerrarBannerPWA() {
       <img id="dt-topbar-logo" src="" alt="Monteloro">
       <div>
         <div id="dt-topbar-brand">Monteloro</div>
-        <div id="dt-version" style="font-size:0.58rem;color:rgba(255,255,255,0.35)">V-1.3.260408</div>
+        <div id="dt-version" style="font-size:0.58rem;color:rgba(255,255,255,0.35)">V-1.4.260413</div>
       </div>
     </div>
     <div id="dt-topbar-right">
@@ -2478,6 +2478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const usuario = (DB.usuarios || []).find(u => u.id === id && u.estado !== 'inactivo');
         if (usuario) {
           currentUser = usuario;
+          ajustarConsecutivoDesdeVentas(currentUser);
           startApp();
           return;
         }
@@ -2636,6 +2637,8 @@ function doLogin() {
   }
   currentUser = usuario;
   localStorage.setItem('ventaruta_session', JSON.stringify({ id: usuario.id }));
+  // Capa 2: ajustar consecutivo al iniciar sesión antes de cualquier venta
+  ajustarConsecutivoDesdeVentas(currentUser);
   document.getElementById('login-screen').classList.add('hidden');
   startApp();
 }
@@ -3519,31 +3522,84 @@ function generateConsecutivoTraslado() {
   return prefijo + String(siguiente).padStart(2, '0');
 }
 
+// ─── HELPER: compara dos consecutivos y devuelve el más avanzado ───
+function consecutivoMasAvanzado(a, b) {
+  if (!a) return b || '';
+  if (!b) return a;
+  const mA = a.match(/^([A-Za-z]*)(\d+)$/);
+  const mB = b.match(/^([A-Za-z]*)(\d+)$/);
+  if (!mA && !mB) return a;
+  if (!mA) return b;
+  if (!mB) return a;
+  // Si tienen diferente prefijo, respetar el de Sheets (a)
+  if (mA[1].toUpperCase() !== mB[1].toUpperCase()) return a;
+  return parseInt(mA[2]) >= parseInt(mB[2]) ? a : b;
+}
+
+// ─── CAPA 2: recalcular consecutivo desde ventas existentes al iniciar ───
+function ajustarConsecutivoDesdeVentas(usuario) {
+  if (!usuario || !usuario.consecutivoInicial) return;
+  const match = (usuario.consecutivoActual || usuario.consecutivoInicial).match(/^([A-Za-z]*)(\d+)$/);
+  if (!match) return;
+  const prefix = match[1].toUpperCase();
+
+  // Buscar el número más alto en ventas del mismo vendedor con el mismo prefijo
+  let maxNum = parseInt(match[2]);
+  (DB.sales || []).forEach(s => {
+    if (s.usuarioId !== usuario.id) return;
+    const m = (s.id || '').match(/^([A-Za-z]*)(\d+)$/);
+    if (!m) return;
+    if (m[1].toUpperCase() !== prefix) return;
+    const n = parseInt(m[2]);
+    if (n > maxNum) maxNum = n;
+  });
+
+  // El próximo debe estar por encima del máximo encontrado
+  const actual = parseInt(match[2]);
+  if (maxNum >= actual) {
+    const padLen = match[2].length;
+    const nuevoActual = prefix + String(maxNum + 1).padStart(padLen, '0');
+    usuario.consecutivoActual = nuevoActual;
+    const idx = DB.usuarios.findIndex(u => u.id === usuario.id);
+    if (idx >= 0) DB.usuarios[idx].consecutivoActual = nuevoActual;
+    saveDB();
+  }
+}
+
 // ─── CONSECUTIVO DE VENTA POR VENDEDOR ───
 function generateConsecutivo() {
   if (!currentUser || !currentUser.consecutivoInicial) {
     return 'V' + Date.now();
   }
+
+  // Capa 2: verificar que el consecutivo actual esté por encima de todas las ventas existentes
+  ajustarConsecutivoDesdeVentas(currentUser);
+
   const current = currentUser.consecutivoActual || currentUser.consecutivoInicial;
-  // Parse prefix and number: RF001 → prefix=RF, num=1, padLen=3
   const match = current.match(/^([A-Za-z]*)(\d+)$/);
   if (!match) return current + '-' + Date.now();
 
   const prefix = match[1].toUpperCase();
-  const num    = parseInt(match[2]);
   const padLen = match[2].length;
+  let num = parseInt(match[2]);
 
-  const nextNum = num + 1;
-  const nextConsec = prefix + String(nextNum).padStart(padLen, '0');
+  // Capa 3: verificar que el ID no exista ya en DB.sales (última barrera)
+  let candidato = prefix + String(num).padStart(padLen, '0');
+  while (DB.sales && DB.sales.find(s => s.id === candidato)) {
+    num++;
+    candidato = prefix + String(num).padStart(padLen, '0');
+  }
 
-  // Update user's consecutive
+  const nextConsec = prefix + String(num + 1).padStart(padLen, '0');
+
+  // Actualizar consecutivo
   const idx = DB.usuarios.findIndex(u => u.id === currentUser.id);
   if (idx >= 0) {
     DB.usuarios[idx].consecutivoActual = nextConsec;
     currentUser.consecutivoActual = nextConsec;
     saveDB();
   }
-  return current; // return CURRENT before incrementing
+  return candidato;
 }
 
 // ═══════════════════════════════════════════════
@@ -7623,6 +7679,9 @@ async function syncFromSheets(showFeedback = false) {
       DB.usuarios = dataAll.usuarios.map(u => {
         const cedulaStr = String(u.cedula).trim();
         const local = localMap[cedulaStr];
+        // Consecutivo: nunca retroceder — tomar el más avanzado entre local y Sheets
+        const consecSheets = u.consecutivoActual || u.consecutivoInicial || '';
+        const consecLocal  = local ? (local.consecutivoActual || local.consecutivoInicial || '') : '';
         return {
           ...u,
           cedula: cedulaStr,
@@ -7630,7 +7689,8 @@ async function syncFromSheets(showFeedback = false) {
                     : (local ? local.clave : ''),
           estado: (u.estado && String(u.estado).trim()) ? String(u.estado).trim()
                     : 'activo',
-          rol:    (u.rol && String(u.rol).trim()) ? String(u.rol).trim() : 'vendedor'
+          rol:    (u.rol && String(u.rol).trim()) ? String(u.rol).trim() : 'vendedor',
+          consecutivoActual: consecutivoMasAvanzado(consecSheets, consecLocal)
         };
       });
       // Solo conservar usuarios locales que están PENDIENTES de subir
