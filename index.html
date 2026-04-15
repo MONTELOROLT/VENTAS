@@ -992,7 +992,7 @@
           <button class="logout-btn" onclick="resetAppData()" style="background:rgba(255,100,50,0.25);margin-right:4px" title="Limpiar datos locales">🗑️</button>
           <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
             <button class="logout-btn" onclick="doLogout()">Salir</button>
-            <span style="font-size:0.5rem;color:rgba(255,255,255,0.4);letter-spacing:0.03em;font-weight:500;user-select:none">V-1.4.260413</span>
+            <span style="font-size:0.5rem;color:rgba(255,255,255,0.4);letter-spacing:0.03em;font-weight:500;user-select:none">V-1.4.260415</span>
           </div>
         </div>
       </div>
@@ -2239,7 +2239,7 @@ function cerrarBannerPWA() {
       <img id="dt-topbar-logo" src="" alt="Monteloro">
       <div>
         <div id="dt-topbar-brand">Monteloro</div>
-        <div id="dt-version" style="font-size:0.58rem;color:rgba(255,255,255,0.35)">V-1.4.260413</div>
+        <div id="dt-version" style="font-size:0.58rem;color:rgba(255,255,255,0.35)">V-1.4.260415</div>
       </div>
     </div>
     <div id="dt-topbar-right">
@@ -3544,7 +3544,7 @@ function ajustarConsecutivoDesdeVentas(usuario) {
   const prefix = match[1].toUpperCase();
 
   // Buscar el número más alto en ventas del mismo vendedor con el mismo prefijo
-  let maxNum = parseInt(match[2]);
+  let maxNum = 0;
   (DB.sales || []).forEach(s => {
     if (s.usuarioId !== usuario.id) return;
     const m = (s.id || '').match(/^([A-Za-z]*)(\d+)$/);
